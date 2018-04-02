@@ -10,7 +10,7 @@ hero: photo-34605589525_8f576ddb84_o.jpg
 ![Harbin](./photo-34605589525_8f576ddb84_o.jpg)
 
 
-[Github Repository](github.com/mpolinowski/node_express_git)
+[Github Repository](https://github.com/mpolinowski/node_express_git)
 
 
 > This code is part of a training in web development with [Node.js](https://nodejs.org/en/). [EJS](http://ejs.co) will be used as template engine for rendering HTML out of [Express](https://expressjs.com). The library application will use [MongoDB](https://www.mongodb.com) to store information about books and authors - but will also employ the [GoodReads API](https://www.goodreads.com/api) to provide more details on each. [Passport.js](http://www.passportjs.org) is used for local security.
