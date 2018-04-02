@@ -1,6 +1,6 @@
 # PersonalBlog starter for Gatsby
 
-[DEMO website](https://gatsby-starter-personal-blog.greglobinski.com/)
+[DEMO website](https://github.com/mpolinowski/gatsby-starter-personal-blog)
 
 More details soon. For now a couple of annotations.
 
@@ -24,9 +24,3 @@ ALGOLIA_ADMIN_API_KEY=...
 ALGOLIA_INDEX_NAME=...
 FB_APP_ID=...
 ```
-
-The contact form does not need any settings it should work out of the box if you deploy the website to [Netlify](https://www.netlify.com/)
-
-### An educational project
-
-This is an educational project. I'm going to write a series of articles describing what, how and why I did. I'm aiming at helping beginners to understand how the code works. If you are interested visit [Greg for Gatsby](https://forgatsby.greglobinski.com/gatsby-starter-personal-blog/). To be in touch follow me at [@greglobinski](https://twitter.com/greglobinski)
