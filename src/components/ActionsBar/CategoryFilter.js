@@ -14,8 +14,18 @@ const styles = theme => ({
   fontSizeSetter: {
     [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {}
   },
-  open: {
-    color: theme.bars.colors.icon
+  button: {
+    color: "white",
+  },
+  buttonRoot: {
+    "&:hover": {
+      background: "rgba(0, 0, 0, 0.04)"
+    }
+  },
+  buttonLabel: {
+    textTransform: "none",
+    fontSize: "1.4em",
+    color: "#777"
   },
   popperClose: {
     pointerEvents: "none"
@@ -69,7 +79,7 @@ class CategoryFilter extends React.Component {
               aria-haspopup="true"
               onClick={this.handleClick}
               title="Filter the list by category"
-              className={classes.open}
+              className={classes.button}
             >
               <FilterListIcon />
             </IconButton>

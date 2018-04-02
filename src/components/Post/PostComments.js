@@ -22,7 +22,7 @@ class PostComments extends React.Component {
   }
 
   render() {
-    const { classes, slug } = this.props;
+    const { classes, post, slug } = this.props;
 
     return (
       <div id="post-comments" className={classes.postComments}>
@@ -33,7 +33,6 @@ class PostComments extends React.Component {
           data-href={`${config.siteUrl}${slug}`}
           data-width="100%"
           data-numposts="5"
-          data-colorscheme={this.props.theme.main.colors.fbCommentsColorscheme}
         />
       </div>
     );
@@ -43,8 +42,7 @@ class PostComments extends React.Component {
 PostComments.propTypes = {
   classes: PropTypes.object.isRequired,
   post: PropTypes.object.isRequired,
-  slug: PropTypes.string.isRequired,
-  theme: PropTypes.object.isRequired
+  slug: PropTypes.string.isRequired
 };
 
 export default injectSheet(styles)(PostComments);

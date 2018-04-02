@@ -14,8 +14,18 @@ const styles = theme => ({
   fontSizeSetter: {
     [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {}
   },
-  open: {
-    color: theme.bars.colors.icon
+  button: {
+    color: "white",
+  },
+  buttonRoot: {
+    "&:hover": {
+      background: "rgba(0, 0, 0, 0.04)"
+    }
+  },
+  buttonLabel: {
+    textTransform: "none",
+    fontSize: "1.4em",
+    color: "#777"
   },
   popperClose: {
     pointerEvents: "none"
@@ -67,7 +77,7 @@ class FontSetter extends React.Component {
               aria-haspopup="true"
               onClick={this.handleClick}
               title="Change font size"
-              className={classes.open}
+              className={classes.button}
             >
               <FormatSizeIcon />
             </IconButton>
@@ -84,6 +94,7 @@ class FontSetter extends React.Component {
                     <MenuItem onClick={this.handleSetting}>150%</MenuItem>
                     <MenuItem onClick={this.handleSetting}>125%</MenuItem>
                     <MenuItem onClick={this.handleSetting}>100%</MenuItem>
+                    <MenuItem onClick={this.handleSetting}>75%</MenuItem>
                   </MenuList>
                 </Paper>
               </Grow>

@@ -1,6 +1,8 @@
 ---
 title: I am so clever that sometimes I don't understand a single word of what I am saying
+subTitle: But people will never forget how you made them feel.
 cover: photo-1507124484497-b7f446e65519-cover.jpg
+hero: photo-1507124484497-b7f446e65519.jpg
 ---
 
 ![unsplash.com](./photo-1507124484497-b7f446e65519.jpg)

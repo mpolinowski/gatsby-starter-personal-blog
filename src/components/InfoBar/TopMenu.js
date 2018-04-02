@@ -16,6 +16,9 @@ const styles = theme => ({
     margin: "5px 10px 0 0",
     [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {}
   },
+  button: {
+    color: "#dedede"
+  },
   buttonRoot: {
     "&:hover": {
       background: "rgba(0, 0, 0, 0.04)"
@@ -35,7 +38,7 @@ class TopMenu extends React.Component {
   state = {
     anchorEl: null,
     open: false
-  };
+  }
 
   componentWillUnmount() {
     clearTimeout(this.timeout);
@@ -43,7 +46,7 @@ class TopMenu extends React.Component {
 
   handleClick = () => {
     this.setState({ open: !this.state.open });
-  };
+  }
 
   handleClose = () => {
     if (!this.state.open) {
@@ -53,7 +56,7 @@ class TopMenu extends React.Component {
     this.timeout = setTimeout(() => {
       this.setState({ open: false });
     });
-  };
+  }
 
   render() {
     const { classes, pages } = this.props;
@@ -69,7 +72,7 @@ class TopMenu extends React.Component {
               aria-haspopup="true"
               onClick={this.handleClick}
             >
-              <MoreVertIcon />
+              <MoreVertIcon className={classes.button} />
             </IconButton>
           </Target>
           <Popper

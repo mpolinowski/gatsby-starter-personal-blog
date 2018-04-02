@@ -7,7 +7,6 @@ import Main from "../components/Main";
 import Article from "../components/Main/Article";
 import PageHeader from "../components/Page/PageHeader";
 import Content from "../components/Main/Content";
-import Form from "../components/ContactForm";
 
 const styles = theme => ({});
 
@@ -17,10 +16,9 @@ const Contact = () => {
       <Article>
         <PageHeader title="Contact" />
         <Content>
-          Feel free to contact me by email: <Obfuscate email="greglobinski@gmail.com" /> or use the
+          Feel free to contact me by email: <Obfuscate email="mpolinowski@gmail.com" /> or use the
           form below.
         </Content>
-        <Form />
       </Article>
     </Main>
   );

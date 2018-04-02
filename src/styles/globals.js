@@ -327,7 +327,7 @@ export default {
       "-moz-text-size-adjust": "none",
       "-ms-text-size-adjust": "100%",
       fontFamily: theme.base.fonts.unstyledFamily,
-      background: theme.base.colors.background,
+      background: theme.base.background,
       lineHeight: "1.15",
       textSizeAdjust: "100%"
     },
@@ -352,6 +352,7 @@ export default {
     },
     body: {
       margin: 0,
+      backgroundColor: "#36393e",
       //overflow: "hidden",
       "-webkit-tap-highlight-color": "rgba(0,0,0,.05)"
     },

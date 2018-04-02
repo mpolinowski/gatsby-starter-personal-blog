@@ -76,9 +76,14 @@ const styles = theme => ({
       flexDirection: "column"
     }
   },
+  tooltip: {
+    fontSize: ".9em",
+    padding: ".3em .6em",
+    whiteSpace: "nowrap"
+  },
   button: {
-    color: theme.bars.colors.icon
-  }
+    color: "white",
+  },
 });
 
 class ActionsBar extends React.Component {
@@ -147,23 +152,18 @@ class ActionsBar extends React.Component {
             title="Search"
             className={classes.button}
           >
-            <SearchIcon className={classes.button} />
+            <SearchIcon />
           </IconButton>
         </div>
         <div className={classes.group}>
           {navigatorPosition === "is-aside" && <FontSetter increaseFont={this.fontSetterOnClick} />}
-          {screenfull.enabled && (
-            <IconButton
-              aria-label="Fullscreen"
-              onClick={this.fullscreenOnClick}
-              title="Fullscreen mode"
-              className={classes.button}
-            >
-              {this.state.fullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-            </IconButton>
-          )}
-          <IconButton aria-label="Back to top" onClick={this.arrowUpOnClick} title="Scroll to top">
-            <ArrowUpwardIcon className={classes.button} />
+          <IconButton
+            aria-label="Back to top"
+            onClick={this.arrowUpOnClick}
+            title="Scroll to top"
+            className={classes.button}
+          >
+            <ArrowUpwardIcon />
           </IconButton>
         </div>
       </div>

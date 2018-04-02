@@ -6,7 +6,7 @@ import IconButton from "material-ui/IconButton";
 
 import ExpandMoreIcon from "material-ui-icons/ExpandMore";
 
-import avatar from "../../images/jpg/avatar.jpg";
+import avatar from "../../images/avatar/avatar.svg";
 import config from "../../../content/meta/config";
 
 const styles = theme => ({
@@ -42,10 +42,7 @@ const styles = theme => ({
   avatar: {
     width: "36px",
     height: "36px",
-    borderRadius: "65% 75%",
     border: "1px solid #ddd",
-    transition: "all .3s",
-    transitionTimingFunction: "ease",
     display: "inline-block",
     overflow: "hidden",
     "& img": {
@@ -56,13 +53,8 @@ const styles = theme => ({
       height: "44px"
     },
     [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
-      width: "60px",
-      height: "60px"
-    },
-    "@media (hover: hover)": {
-      "&:hover": {
-        borderRadius: "75% 65%"
-      }
+      width: "50px",
+      height: "50px"
     }
   },
   title: {
@@ -99,7 +91,6 @@ const styles = theme => ({
     top: "30px",
     right: "-25px",
     display: "none",
-    color: theme.info.colors.text,
     ".is-aside.open &": {
       display: "block"
     }
