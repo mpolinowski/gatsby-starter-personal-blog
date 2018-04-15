@@ -2,31 +2,11 @@
 title: Search Engine Setup and Configuration
 subTitle: Elasticsearch is a distributed, JSON-based search and analytics engine designed for horizontal scalability, maximum reliability, and easy management.
 category: "Elasticsearch"
-cover: photo-1489824904134-891ab64532f1-cover.jpg
-hero: photo-1489824904134-891ab64532f1.jpg
+cover: photo-34139903180_fd0c397abc_o-cover.jpg
+hero: photo-34139903180_fd0c397abc_o.jpg
 ---
 
-![unsplash.com](./photo-1489824904134-891ab64532f1.jpg)
-
-<!-- TOC -->
-
-- [01 Search Engine Setup and Configuration](#01-search-engine-setup-and-configuration)
-  - [Installing Elasticsearch 6.x on CentOS](#installing-elasticsearch-6x-on-centos)
-    - [Import the Elasticsearch PGP Key](#import-the-elasticsearch-pgp-key)
-  - [Installing from the RPM repository](#installing-from-the-rpm-repository)
-    - [Running Elasticsearch with _systemd_](#running-elasticsearch-with-_systemd_)
-    - [Checking that Elasticsearch is running](#checking-that-elasticsearch-is-running)
-    - [Configuring Elasticsearch](#configuring-elasticsearch)
-  - [Installing Kibana 6.x on CentOS](#installing-kibana-6x-on-centos)
-    - [Running Kibana with _systemd_](#running-kibana-with-_systemd_)
-  - [Install X-Pack](#install-x-pack)
-    - [Elasticsearch Security](#elasticsearch-security)
-    - [Kibana Security](#kibana-security)
-  - [Enabling Anonymous Access](#enabling-anonymous-access)
-
-<!-- /TOC -->
-
-> Proin ornare ligula eu tellus tempus elementum. Aenean bibendum iaculis mi, nec blandit lacus interdum vitae. Vestibulum non nibh risus, a scelerisque purus. Ut vel arcu ac tortor adipiscing hendrerit vel sed massa. Fusce sem libero, lacinia vulputate interdum non, porttitor non quam. Aliquam sed felis ligula. Duis non nulla magna.
+![Search Engine Setup and Configuration](./photo-34139903180_fd0c397abc_o.jpg)
 
 
 ## 01 Search Engine Setup and Configuration

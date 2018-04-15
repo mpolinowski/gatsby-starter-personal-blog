@@ -2,35 +2,11 @@
 title: Using NGINX as proxy for your nodejs apps
 subTitle: We want to set up NGINX with http/2 to serve multiple node apps and an instance of Elasticsearch on a single centOS server
 category: "NGINX"
-cover: photo-1490474418585-ba9bad8fd0ea-cover.jpg
-hero: photo-1490474418585-ba9bad8fd0ea.jpg
+cover: photo-34607920835_e26fff721f_o-cover.jpg
+hero: photo-34607920835_e26fff721f_o.jpg
 ---
 
-![unsplash.com](./photo-1490474418585-ba9bad8fd0ea.jpg)
-
-<!-- TOC -->
-
-- [01 Useful links](#01-useful-links)
-- [02 Install Nginx and Adjust the Firewall](#02-install-nginx-and-adjust-the-firewall)
-- [03 FirewallD](#03-firewalld)
-- [04 Create a login](#04-create-a-login)
-- [05 nginx.conf](#05-nginxconf)
-- [06 virtual.conf](#06-virtualconf)
-- [07 GoDaddy Certs](#07-godaddy-certs)
-  - [Generate a CSR and Private Key](#generate-a-csr-and-private-key)
-  - [Download your key from GoDaddy](#download-your-key-from-godaddy)
-  - [Install Certificate On Web Server](#install-certificate-on-web-server)
-- [08 LetsEncrypt and Certbot](#08-letsencrypt-and-certbot)
-  - [Install Certbot on CentOS 7](#install-certbot-on-centos-7)
-  - [Run Certbot](#run-certbot)
-  - [Setting Up Auto Renewal](#setting-up-auto-renewal)
-    - [Systemd](#systemd)
-    - [Cron.d](#crond)
-  - [TLS-SNI-01 challenge Deactivated](#tls-sni-01-challenge-deactivated)
-
-<!-- /TOC -->
-
-> Proin ornare ligula eu tellus tempus elementum. Aenean bibendum iaculis mi, nec blandit lacus interdum vitae. Vestibulum non nibh risus, a scelerisque purus. Ut vel arcu ac tortor adipiscing hendrerit vel sed massa. Fusce sem libero, lacinia vulputate interdum non, porttitor non quam. Aliquam sed felis ligula. Duis non nulla magna.
+![unsplash.com](./photo-34607920835_e26fff721f_o.jpg)
 
 
 ## 01 Useful links
@@ -178,7 +154,7 @@ Re-type new password: xxxxxxxxx
 
 /etc/nginx/nginx.conf
 
-```
+```nginx
 user nginx;
 worker_processes 8;
 error_log /var/log/nginx/error.log;
@@ -236,7 +212,7 @@ http {
 
 Set up virtual server instances for our 2 node/express apps, Elasticsearch and Kibana
 
-```
+```nginx
 # redirect http/80 traffic to https/443 for our node apps
 server {
        listen         80;
@@ -638,7 +614,7 @@ e.g.
 
 1. Create your virtual server conf - the given config below routes an node/express app running on localhost:7777 with a public directory in /opt/mysite-build/app :
 
-```
+```nginx
 server {
        listen         80;
        listen    [::]:80;
