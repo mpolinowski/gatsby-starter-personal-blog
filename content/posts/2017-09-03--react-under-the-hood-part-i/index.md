@@ -1,7 +1,7 @@
 ---
 title: React under the Hood (Part I)
 subTitle: A look behind the curtain of React Starters
-category: "React"
+category: "React.js"
 date: 2016-09-03
 cover: photo-33762606594_1e4362c22c_o-cover.png
 hero: photo-33762606594_1e4362c22c_o.png
@@ -20,6 +20,8 @@ hero: photo-33762606594_1e4362c22c_o.png
 > 
 > React is often said to be easy to learn, but impossible to set up in an dev environment. Once you start reading about it, you will be faced by an exhausting amount of choices that you have to make, before you can move on to actual coding. Starter Packages, like the ones named above, give a quick access to the React world. Let's take a look into that black box now.
 
+
+[Github](https://github.com/mpolinowski/react-under-the-hood)
 
 
 ### Table of Content

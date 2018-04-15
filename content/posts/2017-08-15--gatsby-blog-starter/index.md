@@ -1,7 +1,7 @@
 ---
 title: Gatsby Blog Starter
 subTitle: Build a JAM Stack Blog with Gatsby.js
-category: "Gatsby"
+category: "Gatsby.js"
 date: 2016-08-15
 cover: photo-34475132951_e3ff74c679_o-cover.png
 hero: photo-34475132951_e3ff74c679_o.png
