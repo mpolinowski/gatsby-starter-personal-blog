@@ -1,5 +1,5 @@
 ---
-title: Unreal Engine Coding Standards (Part I)
+title: Unreal Engine Coding Standards (I)
 subTitle: The Unreal Engine Developer Course - Learn C++ & Make Games. Learn C++ from scratch. How to make your first video game in Unreal engine. Gain confidence in programming.
 category: "C++"
 date: 2017-06-17

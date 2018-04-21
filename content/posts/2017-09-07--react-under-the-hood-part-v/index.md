@@ -1,5 +1,5 @@
 ---
-title: React under the Hood (Part V)
+title: React under the Hood (V)
 subTitle: A look behind the curtain of React Starters
 category: "React.js"
 date: 2017-09-07

@@ -1,5 +1,5 @@
 ---
-title: Node/Express with MongoDB (Part II)
+title: Node/Express with MongoDB (II)
 subTitle: Building a Express Web Library with a MongoDB Backend and Goodreads API Integration
 category: "Express.js"
 date: 2016-06-05

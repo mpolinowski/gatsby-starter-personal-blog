@@ -1,5 +1,5 @@
 ---
-title: React under the Hood (Part II)
+title: React under the Hood (II)
 subTitle: A look behind the curtain of React Starters
 category: "Babel"
 date: 2017-09-04
