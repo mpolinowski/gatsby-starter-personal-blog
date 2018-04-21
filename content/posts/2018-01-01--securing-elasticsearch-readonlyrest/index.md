@@ -1,8 +1,8 @@
 ---
-title: Securing Elasticsearch
+title: Securing Elasticsearch with ReadOnlyREST
 subTitle: Elasticsearch doesn't have a basic user authentication - a problem!
 category: "Elasticsearch"
-date: 2016-12-31
+date: 2018-01-01
 cover: photo-15514459555_50b13064fa_o-cover.png
 hero: photo-15514459555_50b13064fa_o.png
 ---
@@ -14,14 +14,10 @@ hero: photo-15514459555_50b13064fa_o.png
 <!-- TOC -->
 
 - [Securing Elasticsearch with ReadonlyREST](#securing-elasticsearch-with-readonlyrest)
-- [Install Elasticsearch](#install-elasticsearch)
-  - [I. Download and install the public signing key](#i-download-and-install-the-public-signing-key)
-  - [II. Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example elasticsearch.repo](#ii-add-the-following-in-your-etcyumreposd-directory-in-a-file-with-a-repo-suffix-for-example-elasticsearchrepo)
-  - [III. Install a specific version of Elasticsearch](#iii-install-a-specific-version-of-elasticsearch)
-  - [IV. Restrict access to your Elasticsearch instance](#iv-restrict-access-to-your-elasticsearch-instance)
-  - [V. Set up the Elasticsearch Service](#v-set-up-the-elasticsearch-service)
-- [Install Kibana](#install-kibana)
-- [Secure Elasticsearch](#secure-elasticsearch)
+  - [Install Elasticsearch](#install-elasticsearch)
+  - [Install Kibana](#install-kibana)
+  - [Secure Elasticsearch](#secure-elasticsearch)
+  - [Securing Kibana](#securing-kibana)
 
 <!-- /TOC -->
 
@@ -44,9 +40,9 @@ Yes! Searching for alternatives lead me to 2 solutions that are mentioned often 
 
 Today we are going to set up the first of them. The first thing I noticed is, that those plugins are written for the exact Version number of Elasticsearch. The newest version of RestOnlyREST supports Elasticsearch Version 6.2.3 - I am using 6.2.4, which unfortunately means that I have to downgrade my ES version.... and since there is no downgrade option with ES, I have to shut off the service and go in manually to delete every folder that ES has generated on my CentOS server (really ? That is the only option that I could find online.. but it is really a mess...).
 
-## Install Elasticsearch
+### Install Elasticsearch
 
-### I. Download and install the public signing key
+__I. Download and install the public signing key__
 
 
 ```bash
@@ -54,7 +50,7 @@ Today we are going to set up the first of them. The first thing I noticed is, th
 ```
 
 
-### II. Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example elasticsearch.repo
+__II. Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example elasticsearch.repo__
 
 
 ```yml
@@ -68,7 +64,7 @@ autorefresh=1
 type=rpm-md
 ```
 
-### III. Install a specific version of Elasticsearch
+__III. Install a specific version of Elasticsearch__
 
 ReadOnlyREST requires us to install a specific version (6.2.3) of Elasticsearch. Let's check what versions are available to install (CentOS/yum):
 
@@ -142,7 +138,7 @@ Is this ok [y/d/N]:y
 ```
 
 
-### IV. Restrict access to your Elasticsearch instance
+__IV. Restrict access to your Elasticsearch instance__
 
 To configure Elasticsearch open the following file inside your text editor: _/etc/elasticsearch/elasticsearch.yml_. We want to limit access to localhost and a public domain that we are going to configure in NGINX. This can be done with the variable __network.host__:
 
@@ -175,7 +171,7 @@ http.cors:
 Both examples above allow Cross-Origin Resource Sharing for your domain on every available port - but for some reasons the first regular expression stopped to work in Elasticsearch 6.2.x. You just need one of them.
 
 
-### V. Set up the Elasticsearch Service
+__V. Set up the Elasticsearch Service__
 
 To configure Elasticsearch to start automatically when the system boots up, run the following commands:
 
@@ -192,7 +188,7 @@ sudo systemctl start elasticsearch.service
 sudo systemctl stop elasticsearch.service
 ```
 
-## Install Kibana
+### Install Kibana
 
 Since we installed a specific version (6.2.3) of Elasticsearch we now need to install the same version of the admin panel Kibana. First Create and edit a new yum repository file for Kibana in _/etc/yum.repos.d/kibana.repo_:
 
@@ -236,7 +232,7 @@ sudo systemctl stop kibana.service
 ```
 
 
-## Secure Elasticsearch
+### Secure Elasticsearch
 
 Now we can install RestOnlyREST to secure the database. First [download](https://readonlyrest.com/download.html) the correct package for the installed version of Elasticsearch and place it inside the _./tmp_ directory.
 
@@ -282,3 +278,8 @@ for descriptions of what these permissions allow and the associated risks.
 Continue with installation? [y/N]y
 -> Installed readonlyrest
 ```
+
+
+### Securing Kibana
+
+Remember to [secure Kibana with NGINX](/nginx-node-security/), since it is not protected by the free version of ReadOnlyREST!

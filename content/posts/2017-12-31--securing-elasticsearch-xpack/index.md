@@ -1,8 +1,8 @@
 ---
-title: Securing Elasticsearch
+title: Securing Elasticsearch with X-Pack
 subTitle: Elasticsearch doesn't have a basic user authentication - a problem!
 category: "Elasticsearch"
-date: 2016-12-31
+date: 2017-12-31
 cover: photo-11627765794_33a4cf2a0c_o-cover.jpg
 hero: photo-11627765794_33a4cf2a0c_o.png
 ---
@@ -17,15 +17,6 @@ hero: photo-11627765794_33a4cf2a0c_o.png
   - [Elasticsearch Security](#elasticsearch-security)
   - [Kibana Security](#kibana-security)
   - [Enabling Anonymous Access](#enabling-anonymous-access)
-- [Securing Elasticsearch with ReadonlyREST](#securing-elasticsearch-with-readonlyrest)
-- [Install Elasticsearch](#install-elasticsearch)
-  - [I. Download and install the public signing key](#i-download-and-install-the-public-signing-key)
-  - [II. Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example elasticsearch.repo](#ii-add-the-following-in-your-etcyumreposd-directory-in-a-file-with-a-repo-suffix-for-example-elasticsearchrepo)
-  - [III. Install a specific version of Elasticsearch](#iii-install-a-specific-version-of-elasticsearch)
-  - [IV. Restrict access to your Elasticsearch instance](#iv-restrict-access-to-your-elasticsearch-instance)
-  - [V. Set up the Elasticsearch Service](#v-set-up-the-elasticsearch-service)
-- [Install Kibana](#install-kibana)
-- [Secure Elasticsearch](#secure-elasticsearch)
 
 <!-- /TOC -->
 

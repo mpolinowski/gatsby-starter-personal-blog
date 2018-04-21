@@ -1,7 +1,7 @@
 ---
 title: Search Engine Setup and Configuration
 subTitle: Elasticsearch is a distributed, JSON-based search and analytics engine designed for horizontal scalability, maximum reliability, and easy management.
-date: 2016-10-03
+date: 2017-10-03
 category: "Elasticsearch"
 cover: photo-34139903180_fd0c397abc_o-cover.jpg
 hero: photo-34139903180_fd0c397abc_o.jpg

@@ -2,7 +2,7 @@
 title: React under the Hood (Part III)
 subTitle: A look behind the curtain of React Starters
 category: "Webpack"
-date: 2016-09-05
+date: 2017-09-05
 cover: photo-34219553960_350f18edbb_o-cover.png
 hero: photo-34219553960_350f18edbb_o.png
 ---

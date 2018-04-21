@@ -2,7 +2,7 @@
 title: Floating Menu Buttons
 subTitle: A React.js Component for floating menu Buttons
 category: "React.js"
-date: 2016-12-09
+date: 2017-12-09
 cover: photo-34445490202_b13f40bd9d_o-cover.png
 hero: photo-34445490202_b13f40bd9d_o.png
 ---

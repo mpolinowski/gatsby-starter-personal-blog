@@ -2,7 +2,7 @@
 title: React Router 4
 subTitle: A test project to get familiar with React Router v4
 category: "React.js"
-date: 2016-12-07
+date: 2017-12-07
 cover: photo-34445986622_955cf9ae16_o-cover.jpg
 hero: photo-34445986622_955cf9ae16_o.jpg
 ---

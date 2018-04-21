@@ -2,7 +2,7 @@
 title: Food Caloric Table App
 subTitle: A sample app will be a simple food nutrition lookup table. The data driving the app is supplied by the USDA's National Nutrient Database.
 category: "React.js"
-date: 2016-07-22
+date: 2017-07-22
 cover: photo-34221441540_627d018c4b_o-cover.png
 hero: photo-34221441540_627d018c4b_o.png
 ---

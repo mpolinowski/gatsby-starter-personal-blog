@@ -2,7 +2,7 @@
 title: React under the Hood (Part VI)
 subTitle: A look behind the curtain of React Starters
 category: "React.js"
-date: 2016-09-08
+date: 2017-09-08
 cover: photo-34607876585_6e59cd762e_o-cover.png
 hero: photo-34607876585_6e59cd762e_o.png
 ---

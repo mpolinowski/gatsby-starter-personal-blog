@@ -2,7 +2,7 @@
 title: React under the Hood (Part II)
 subTitle: A look behind the curtain of React Starters
 category: "Babel"
-date: 2016-09-04
+date: 2017-09-04
 cover: photo-34443677922_8f09e47dd3_o-cover.png
 hero: photo-34443677922_8f09e47dd3_o.png
 ---

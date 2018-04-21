@@ -2,7 +2,7 @@
 title: Gatsby.js with Bootstrap 4
 subTitle: Creating a Gatsby.js starter using Reactstrap
 category: "Gatsby.js"
-date: 2016-12-17
+date: 2017-12-17
 cover: photo-33795713253_5b71110d90_o-cover.png
 hero: photo-33795713253_5b71110d90_o.png
 ---

@@ -2,7 +2,7 @@
 title: Google Analytics
 subTitle: How to add Google Analytics to your AMP Webpage,
 category: "Google Analytics"
-date: 2016-08-07
+date: 2017-08-07
 cover: photo-34605550695_a2aebdc705_o-cover.png
 hero: photo-34605550695_a2aebdc705_o.png
 ---

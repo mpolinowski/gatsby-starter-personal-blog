@@ -2,7 +2,7 @@
 title: NGINX, Node.js & Security
 subTitle: Using NGINX as an SSL proxy for your Node.js apps
 category: "NGINX"
-date: 2016-12-24
+date: 2017-12-24
 cover: photo-34139903180_fd0c397abc_o-cover.png
 hero: photo-34139903180_fd0c397abc_o.png
 ---

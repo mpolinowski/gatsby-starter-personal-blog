@@ -2,7 +2,7 @@
 title: Elasticsearch & Kibana
 subTitle: Installing our Search Engine and it's Admin Interface
 category: "Elasticsearch"
-date: 2016-12-16
+date: 2017-12-16
 cover: photo-11627438213_027c318e02_o-cover.jpg
 hero: photo-11627438213_027c318e02_o.jpg.png
 ---

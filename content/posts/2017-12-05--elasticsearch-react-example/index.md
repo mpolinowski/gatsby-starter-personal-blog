@@ -2,7 +2,7 @@
 title: React Search Interface
 subTitle: An example project showing how to use Elasticsearch with React
 category: "Elasticsearch"
-date: 2016-09-03
+date: 2017-09-03
 cover: photo-34445485832_9f5f2a9aea_o-cover.png
 hero: photo-34445485832_9f5f2a9aea_o.png
 ---

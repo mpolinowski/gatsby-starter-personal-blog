@@ -2,7 +2,7 @@
 title: Unreal Engine Coding Standards (Part V)
 subTitle: The Unreal Engine Developer Course - Learn C++ & Make Games. Learn C++ from scratch. How to make your first video game in Unreal engine. Gain confidence in programming.
 category: "C++"
-date: 2016-06-17
+date: 2017-06-17
 cover: photo-34605459545_86a3d9a34f_o-cover.jpg
 hero: photo-33795443263_fcb0014fd2_o.jpg
 ---

@@ -2,7 +2,7 @@
 title: Gatsby.js Knowledgebase (Part II)
 subTitle: Creating a Knowledgbase using Gatsby.js and React.js
 category: "Gatsby.js"
-date: 2016-12-15
+date: 2017-12-15
 cover: photo-33796028333_a7fa30ab08_o-cover.jpg
 hero: photo-33796028333_a7fa30ab08_o.jpg
 ---

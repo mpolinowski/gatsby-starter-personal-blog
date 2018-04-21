@@ -2,7 +2,7 @@
 title: Next.js Server Side Rendering
 subTitle: A first look at Next.js Version 4!
 category: "Next.js"
-date: 2016-12-09
+date: 2017-12-09
 cover: photo-34221454260_1d42dbe06f_o-cover.png
 hero: photo-34221454260_1d42dbe06f_o.png
 ---

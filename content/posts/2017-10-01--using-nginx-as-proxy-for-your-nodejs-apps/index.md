@@ -2,7 +2,7 @@
 title: Using NGINX as proxy for your nodejs apps
 subTitle: We want to set up NGINX with http/2 to serve multiple node apps and an instance of Elasticsearch on a single centOS server
 category: "NGINX"
-date: 2016-10-01
+date: 2017-10-01
 cover: photo-34607920835_e26fff721f_o-cover.jpg
 hero: photo-34607920835_e26fff721f_o.jpg
 ---
