@@ -1,8 +1,8 @@
 {
   "name": "gatsby-starter-personal-blog",
   "description": "A Gatsby starter for a personal blog",
-  "author": "Greg Lobinski <greglobinski@gmail.com>",
-  "repository": "https://github.com/greglobinski/gatsby-starter-personal-blog",
+  "author": "Mike Polinowski <mpolinowski@gmail.com>",
+  "repository": "https://github.com/mpolinowski/gatsby-starter-personal-blog",
   "version": "1.0.3",
   "license": "MIT",
   "scripts": {
@@ -58,7 +58,6 @@
     "gatsby": "^1.9.253",
     "gatsby-image": "^1.0.47",
     "gatsby-link": "^1.6.41",
-    "gatsby-plugin-algolia": "^0.0.3",
     "gatsby-plugin-catch-links": "^1.0.15",
     "gatsby-plugin-favicon": "^2.1.1",
     "gatsby-plugin-feed": "^1.3.21",
@@ -70,6 +69,7 @@
     "gatsby-plugin-react-helmet": "^2.0.11",
     "gatsby-plugin-sharp": "^1.6.43",
     "gatsby-plugin-sitemap": "^1.2.22",
+    "gatsby-remark-autolink-headers": "^1.4.17",
     "gatsby-remark-copy-linked-files": "^1.5.32",
     "gatsby-remark-external-links": "^0.0.4",
     "gatsby-remark-images": "^1.5.62",
@@ -79,8 +79,7 @@
     "gatsby-source-filesystem": "^1.5.33",
     "gatsby-transformer-remark": "^1.7.40",
     "gatsby-transformer-sharp": "^1.6.23",
-    "instantsearch.css": "^7.0.0",
-    "material-ui": "1.0.0-beta.36",
+    "material-ui": "^1.0.0-beta.36",
     "material-ui-icons": "^1.0.0-beta.36",
     "react-custom-scrollbars": "^4.2.1",
     "react-disqus-comments": "^1.2.0",
@@ -98,7 +97,6 @@
     "react-share": "^2.1.1",
     "rebound": "^0.1.0",
     "redux": "^3.7.2",
-    "redux-devtools-extension": "^2.13.2",
-    "screenfull": "^3.3.2"
+    "redux-devtools-extension": "^2.13.2"
   }
 }

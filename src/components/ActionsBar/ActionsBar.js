@@ -5,10 +5,8 @@ import IconButton from "material-ui/IconButton";
 
 import Link from "gatsby-link";
 import { connect } from "react-redux";
-import screenfull from "screenfull";
 
 import HomeIcon from "material-ui-icons/Home";
-import SearchIcon from "material-ui-icons/Search";
 import ArrowUpwardIcon from "material-ui-icons/ArrowUpward";
 import FullscreenIcon from "material-ui-icons/Fullscreen";
 import FullscreenExitIcon from "material-ui-icons/FullscreenExit";
@@ -91,24 +89,8 @@ class ActionsBar extends React.Component {
     fullscreen: false
   };
 
-  componentDidMount() {
-    if (screenfull.enabled) {
-      screenfull.on("change", () => {
-        this.setState({
-          fullscreen: screenfull.isFullscreen
-        });
-      });
-    }
-  }
-
   homeOnClick = featureNavigator.bind(this);
   searchOnClick = moveNavigatorAside.bind(this);
-
-  fullscreenOnClick = () => {
-    if (screenfull.enabled) {
-      screenfull.toggle();
-    }
-  };
 
   arrowUpOnClick = () => {
     this.props.setScrollToTop(true);
@@ -143,17 +125,6 @@ class ActionsBar extends React.Component {
           {((isWideScreen && navigatorShape === "open") || navigatorPosition !== "is-aside") && (
             <CategoryFilter categories={categories} filterCategory={this.categoryFilterOnClick} />
           )}
-          <IconButton
-            aria-label="Search"
-            onClick={this.searchOnClick}
-            component={Link}
-            data-shape="closed"
-            to="/search/"
-            title="Search"
-            className={classes.button}
-          >
-            <SearchIcon />
-          </IconButton>
         </div>
         <div className={classes.group}>
           {navigatorPosition === "is-aside" && <FontSetter increaseFont={this.fontSetterOnClick} />}

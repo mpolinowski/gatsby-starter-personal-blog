@@ -24,8 +24,6 @@ module.exports = {
   manifestDisplay: "standalone",
   // social
   authorSocialLinks: [
-    { name: "github", url: "https://github.com/mpolinowski" },
-    { name: "twitter", url: "https://twitter.com/mpolinowski" },
-    { name: "facebook", url: "http://facebook.com/mpolinowski" }
+    { name: "github", url: "https://github.com/mpolinowski" }
   ]
 };
