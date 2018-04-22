@@ -1,6 +1,6 @@
 ---
 title: Other Work
-menuTitle: My Design Work
+menuTitle: Interests
 ---
 
 Hello World
