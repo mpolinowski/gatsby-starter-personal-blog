@@ -19,8 +19,8 @@ module.exports = {
   manifestName: "Mike Polinowski :: Developer Blog",
   manifestShortName: "Developer Blog", // max 12 characters
   manifestStartUrl: "/",
-  manifestBackgroundColor: colors.bg,
-  manifestThemeColor: colors.bg,
+  manifestBackgroundColor: colors.darker,
+  manifestThemeColor: colors.darker,
   manifestDisplay: "standalone",
   // social
   authorSocialLinks: [
