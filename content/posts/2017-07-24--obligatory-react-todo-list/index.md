@@ -19,11 +19,15 @@ Source [Medium](https://medium.com/codingthesmartway-com-blog/the-2017-react-dev
 Every web-dev should have one or two of them on Github ~
 
 
-01. [create-react-app](#01-create-react-app)
-02. [Set Initial State](#02-set-initial-state)
-03. [JSX, Font-Awesome and Bootstrap](#03-jsx,-font-awesome-and-bootstrap)
-04. [Add Remove TODO function](#04-add-remove-todo-function)
-05. [Add a Add TODO function](#05-add-a-add-todo-function)
+<!-- TOC -->
+
+- [01 create-react-app](#01-create-react-app)
+- [02 Set Initial State](#02-set-initial-state)
+- [03 JSX, Font-Awesome and Bootstrap](#03-jsx-font-awesome-and-bootstrap)
+- [04 Add Remove TODO function](#04-add-remove-todo-function)
+- [05 Add a Add TODO function](#05-add-a-add-todo-function)
+
+<!-- /TOC -->
 
 
 ![](./todolist_02.png)

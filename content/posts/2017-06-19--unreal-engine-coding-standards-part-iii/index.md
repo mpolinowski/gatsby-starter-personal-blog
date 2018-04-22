@@ -16,6 +16,16 @@ hero: photo-34477006171_65093dd884_o.jpg
 > The following is the commented Course Journal:
 
 
+<!-- TOC -->
+
+- [Iterating With For & While Loops](#iterating-with-for--while-loops)
+- [Clarity is Worth Fighting For](#clarity-is-worth-fighting-for)
+- [Booleans and comparisons](#booleans-and-comparisons)
+- [Using do and while in C++](#using-do-and-while-in-c)
+
+<!-- /TOC -->
+
+
 ### Iterating With For & While Loops
 
 + Use loops to prevent typing the same code repeatedly

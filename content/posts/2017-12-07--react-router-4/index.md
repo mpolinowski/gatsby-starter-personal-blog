@@ -17,17 +17,15 @@ hero: photo-34445986622_955cf9ae16_o.jpg
 ![](./rr4_01.png)
 
 
+<!-- TOC -->
 
----
-Table of Topics
+- [01 create-react-app](#01-create-react-app)
+- [02 react-bootstrap](#02-react-bootstrap)
+- [03 react-router-dom](#03-react-router-dom)
+- [04 Nested Routes](#04-nested-routes)
+- [05 Loading Animations](#05-loading-animations)
 
-01. [create-react-app](#01-create-react-app)
-02. [react-bootstrap](#02-react-bootstrap)
-03. [react-router-dom](#03-react-router-dom)
-04. [Nested Routes](#04-nested-routes)
-05. [Loading Animations](#05-loading-animations)
-
-
+<!-- /TOC -->
 
 
 ## 01 create-react-app

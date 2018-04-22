@@ -16,6 +16,15 @@ hero: photo-34221455520_6e72413b0c_o.jpg
 > The following is the commented Course Journal:
 
 
+<!-- TOC -->
+
+- [Variables and cin for Input](#variables-and-cin-for-input)
+- [Using getline()](#using-getline)
+- [Simplifying With Functions](#simplifying-with-functions)
+
+<!-- /TOC -->
+
+
 ### Variables and cin for Input
 
 + Introducing pseudocode programming - add a comment to describe the function before you start programming

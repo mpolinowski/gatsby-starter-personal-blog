@@ -17,6 +17,20 @@ hero: photo-33795713253_5b71110d90_o.png
 [Github](https://github.com/mpolinowski/gatsby-reactstrap)
 
 
+<!-- TOC -->
+
+- [Gatsby.js & Bootstrap 4](#gatsbyjs--bootstrap-4)
+  - [Install Gatsby's command line tool](#install-gatsbys-command-line-tool)
+  - [Using the Gatsby CLI](#using-the-gatsby-cli)
+  - [Install reactstrap](#install-reactstrap)
+    - [Optional Dependencies](#optional-dependencies)
+  - [Import the Components](#import-the-components)
+  - [Testing your build](#testing-your-build)
+  - [Setting up a Webserver](#setting-up-a-webserver)
+
+<!-- /TOC -->
+
+
 Let's try to use the static site generator for React - [Gatsby](https://www.gatsbyjs.org) together with the Bootstrap 4 React components from [reactstrap](https://reactstrap.github.io). To get started, I want to reproduce one of the official examples from [getbootstrap.com](http://getbootstrap.com/docs/4.0/examples/album/).
 
 ![Gatsby-reactstrap](./_gatsby-reactstrap_01.png)

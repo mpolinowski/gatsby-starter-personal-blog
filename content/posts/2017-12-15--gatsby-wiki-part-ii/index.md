@@ -25,17 +25,25 @@ Install this starter (assuming Gatsby is installed) by running from your CLI:
 gatsby new gatsby-wiki
 ```
 
-1. [Part I](/gatsby-wiki-part-i/)
-2. [Gatsby Plugins](#07-gatsby-plugins)
-3. [Single Page Application](#08-single-page-application)
-4. [GraphQL](#09-graphql)
-5. [Adding File Data](#10-adding-file-data)
-6. [Working with Markdown](#11-working-with-markdown)
-7. [Adding Material-UI](#12-adding-material-ui)
-8. [Adding Elasticsearch](#13-adding-elasticsearch)
-9. [Build the Static Page](#xx-build-the-static-page)
+<!-- TOC -->
 
----
+- [gatsby-starter-default](#gatsby-starter-default)
+  - [02 Gatsby Plugins](#02-gatsby-plugins)
+    - [Progress Animation](#progress-animation)
+    - [Offline Support and Manifest](#offline-support-and-manifest)
+  - [03 Single-Page-Application](#03-single-page-application)
+  - [04 GraphQL](#04-graphql)
+  - [05 Adding File Data](#05-adding-file-data)
+  - [06 Working with Markdown](#06-working-with-markdown)
+    - [Post Template for our Markdown Data](#post-template-for-our-markdown-data)
+    - [Nested Routes with Markdown](#nested-routes-with-markdown)
+    - [Creating an Index Page](#creating-an-index-page)
+    - [Catching Links from Markdown](#catching-links-from-markdown)
+  - [07 Adding Material-UI](#07-adding-material-ui)
+  - [08 Adding Elasticsearch](#08-adding-elasticsearch)
+  - [09 Build the Static Page](#09-build-the-static-page)
+
+<!-- /TOC -->
 
 
 ## 02 Gatsby Plugins

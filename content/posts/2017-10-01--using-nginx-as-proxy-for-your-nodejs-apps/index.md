@@ -7,7 +7,30 @@ cover: photo-34607920835_e26fff721f_o-cover.jpg
 hero: photo-34607920835_e26fff721f_o.jpg
 ---
 
-![unsplash.com](./photo-34607920835_e26fff721f_o.jpg)
+![Hongkong](./photo-34607920835_e26fff721f_o.jpg)
+
+
+<!-- TOC -->
+
+- [01 Useful links](#01-useful-links)
+- [02 Install Nginx and Adjust the Firewall](#02-install-nginx-and-adjust-the-firewall)
+- [03 FirewallD](#03-firewalld)
+- [04 Create a login](#04-create-a-login)
+- [05 nginx.conf](#05-nginxconf)
+- [06 virtual.conf](#06-virtualconf)
+- [07 GoDaddy Certs](#07-godaddy-certs)
+  - [Generate a CSR and Private Key](#generate-a-csr-and-private-key)
+  - [Download your key from GoDaddy](#download-your-key-from-godaddy)
+  - [Install Certificate On Web Server](#install-certificate-on-web-server)
+- [08 LetsEncrypt and Certbot](#08-letsencrypt-and-certbot)
+  - [Install Certbot on CentOS 7](#install-certbot-on-centos-7)
+  - [Run Certbot](#run-certbot)
+  - [Setting Up Auto Renewal](#setting-up-auto-renewal)
+    - [Systemd](#systemd)
+    - [Cron.d](#crond)
+  - [TLS-SNI-01 challenge Deactivated](#tls-sni-01-challenge-deactivated)
+
+<!-- /TOC -->
 
 
 ## 01 Useful links

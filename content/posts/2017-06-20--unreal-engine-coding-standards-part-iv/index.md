@@ -16,6 +16,20 @@ hero: photo-34606002985_b41c7bdcd5_o.jpg
 > The following is the commented Course Journal:
 
 
+<!-- TOC -->
+
+- [Introducing Classes](#introducing-classes)
+- [Using Header Files as Contracts](#using-header-files-as-contracts)
+- [Including Our Own Header File](#including-our-own-header-file)
+- [Instantiating Your Class](#instantiating-your-class)
+- [Writing & Using Getter Methods](#writing--using-getter-methods)
+- [Introducing the Const Keyword](#introducing-the-const-keyword)
+- [Constructors For Initialisation](#constructors-for-initialisation)
+- [Pseudocode Programming](#pseudocode-programming)
+
+<!-- /TOC -->
+
+
 ### Introducing Classes
 
 + Lookup the Turing machine.

@@ -16,6 +16,18 @@ hero: photo-34221445950_a285c6eee4_o.jpg
 > The following is the commented Course Journal:
 
 
+<!-- TOC -->
+
+- [Intro, Notes & Section 2 Assets](#intro-notes--section-2-assets)
+- [S02 Game Design Document (GDD)](#s02-game-design-document-gdd)
+- [How Solutions & Projects Relate](#how-solutions--projects-relate)
+- [C++ Function Syntax](#c-function-syntax)
+- [Using, #include and Namespaces](#using-include-and-namespaces)
+- [Magic Numbers and Constants](#magic-numbers-and-constants)
+
+<!-- /TOC -->
+
+
 ### Intro, Notes & Section 2 Assets
 
 + Welcome to the first actual coding video.

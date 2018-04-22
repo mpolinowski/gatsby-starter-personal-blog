@@ -23,6 +23,25 @@ hero: photo-34607488365_9f40aafb01_o.jpg
 * [Part V](/node-express-mongodb-part-v/) deals with [Passport.js](http://www.passportjs.org) user authentication and [MongoDB](https://www.mongodb.com)
 
 
+<!-- TOC -->
+
+- [01 Adding MongoDB](#01-adding-mongodb)
+  - [Download and Install MongoDB](#download-and-install-mongodb)
+  - [Create adminRoutes to populate the Database](#create-adminroutes-to-populate-the-database)
+- [02 Use the MongoDB Response](#02-use-the-mongodb-response)
+  - [Select Many](#select-many)
+  - [Select One](#select-one)
+- [03 Creating a SignIn Form on Index.ejs](#03-creating-a-signin-form-on-indexejs)
+- [05 Creating the Authentication Route](#05-creating-the-authentication-route)
+- [06 Adding Passport.js Middleware](#06-adding-passportjs-middleware)
+- [07 Authentication with Local Strategy](#07-authentication-with-local-strategy)
+- [08 Saving the User to MongoDB](#08-saving-the-user-to-mongodb)
+- [09 User SignIn from mongoDB](#09-user-signin-from-mongodb)
+- [10 Verifying User in DB](#10-verifying-user-in-db)
+
+<!-- /TOC -->
+
+
 ## 01 Adding MongoDB
 
 ### Download and Install MongoDB

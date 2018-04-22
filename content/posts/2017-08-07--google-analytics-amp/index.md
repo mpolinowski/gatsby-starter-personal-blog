@@ -11,11 +11,16 @@ hero: photo-34605550695_a2aebdc705_o.png
 ![Harbin, China](./photo-34605550695_a2aebdc705_o.png)
 
 
-01. [Set up Google Analytics](#01-set-up-google-analytics)
-02. [Tracking ID](#02-tracking_id)
-03. [amp-analytics](#03-amp-analytics)
-04. [Search Console](04-search-console)
-05. [Search Console link to Google Analytics](05-search-console-link-to-google-analytics)
+<!-- TOC -->
+
+- [01 Set up Google Analytics](#01-set-up-google-analytics)
+- [02 Tracking ID](#02-tracking-id)
+- [03 amp-analytics](#03-amp-analytics)
+- [04 Search Console](#04-search-console)
+- [05 Search Console link to Google Analytics](#05-search-console-link-to-google-analytics)
+
+<!-- /TOC -->
+
 
 ## 01 Set up Google Analytics
 

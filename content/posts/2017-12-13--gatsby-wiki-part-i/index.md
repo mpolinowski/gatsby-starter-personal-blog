@@ -25,15 +25,21 @@ Install this starter (assuming Gatsby is installed) by running from your CLI:
 gatsby new gatsby-wiki
 ```
 
-1. [Start your Gatsby Development Environment](#01-start-your-gatsby-development-environment)
-2. [Adding Content and Linking Pages](#02-adding-content-and-linking-pages)
-3. [Styling your JSX](#03-styling-your-jsx)
-4. [Adding Interactive Components](#04-adding-interactive-components)
-5. [Importing Components to your Sites](#05-importing-components-to-your-sites)
-6. [Passing down Props](#06-passing-down-props)
-7. [Part II](/gatsby-wiki-part-ii/)
 
----
+<!-- TOC -->
+
+- [gatsby-starter-default](#gatsby-starter-default)
+  - [01 Start your Gatsby development environment](#01-start-your-gatsby-development-environment)
+  - [02 Adding content and Linking Pages](#02-adding-content-and-linking-pages)
+  - [03 Styling your JSX](#03-styling-your-jsx)
+  - [04 Adding Interactive Components](#04-adding-interactive-components)
+  - [05 Importing Components to your Sites](#05-importing-components-to-your-sites)
+  - [06 Passing down Props](#06-passing-down-props)
+    - [Changing Headers](#changing-headers)
+    - [Changing Styles](#changing-styles)
+    - [Setting Default Props](#setting-default-props)
+
+<!-- /TOC -->
 
 
 ## 01 Start your Gatsby development environment

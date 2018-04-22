@@ -24,24 +24,13 @@ hero: photo-34606004425_223f1c6e87_o.jpg
 [Github](https://github.com/mpolinowski/react-under-the-hood)
 
 
+<!-- TOC -->
 
-### Table of Content
+- [04 React Components](#04-react-components)
+  - [ES6 Class Syntax](#es6-class-syntax)
+  - [Stateless Functions](#stateless-functions)
 
-01. [Pure React](/react-under-the-hood-part-i/)
-02. [JSX and Babel](/react-under-the-hood-part-ii/)
-	* Transpilation
-03. [Webpack](/react-under-the-hood-part-iii/)
-	* Loading JSON
-	* Adding SASS
-04. [React Components](#04-react-components)
-	* ES6 Class Syntax
-	* Stateless Functions
-05. [Adding React-Icons](/react-under-the-hood-part-v/)
-06. [Working with Props](/react-under-the-hood-part-vi/)
-	* Default Props
-	* PropType Validation
-07. [Working with State](/react-under-the-hood-part-vii/)
-
+<!-- /TOC -->
 
 
 ## 04 React Components

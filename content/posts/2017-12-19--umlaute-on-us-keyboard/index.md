@@ -10,6 +10,14 @@ hero: photo-33795787813_cf3d8edcc6_o.png
 ![Harbin, China](./photo-33795787813_cf3d8edcc6_o.png)
 
 
+<!-- TOC -->
+
+- [Hacking your US keyboard](#hacking-your-us-keyboard)
+    - [Solving 1st World Problems by reading Usermanuals](#solving-1st-world-problems-by-reading-usermanuals)
+
+<!-- /TOC -->
+
+
 # Hacking your US keyboard
 
 ### Solving 1st World Problems by reading Usermanuals

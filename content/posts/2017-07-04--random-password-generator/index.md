@@ -18,6 +18,16 @@ hero: photo-34445476982_dccd0eb8e7_o.png
 [Github](https://github.com/mpolinowski/random-pass-gen)
 
 
+<!-- TOC -->
+
+- [Create the Express App](#create-the-express-app)
+- [Create the React App](#create-the-react-app)
+- [Concurrently](#concurrently)
+- [Create Static Version of our React App](#create-static-version-of-our-react-app)
+
+<!-- /TOC -->
+
+
 ## Create the Express App
 
 Create a directory and cd in to it with your Terminal or Git Bash. You can initialize your app with npm:

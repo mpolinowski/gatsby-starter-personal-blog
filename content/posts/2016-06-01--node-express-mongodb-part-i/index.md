@@ -23,6 +23,16 @@ hero: photo-34445934842_9cbfb7dfcb_o.jpg
 * [Part V](/node-express-mongodb-part-v/) deals with [Passport.js](http://www.passportjs.org) user authentication and [MongoDB](https://www.mongodb.com)
 
 
+<!-- TOC -->
+
+- [01 Install Node.js and Express.js to serve our Web Application](#01-install-nodejs-and-expressjs-to-serve-our-web-application)
+- [02 Add Start Script](#02-add-start-script)
+- [03 Add Routing (Hello World)](#03-add-routing-hello-world)
+- [04 Serve Static Files](#04-serve-static-files)
+
+<!-- /TOC -->
+
+
 ## 01 Install Node.js and Express.js to serve our Web Application
 
 First install [Node.js](https://nodejs.org/en/download/) and initialize the project with npm init. Then npm install express --save to the app directory.
@@ -63,7 +73,7 @@ Now we will add a npm script to the _package.json_ file to start our app:
 The line _"start": "node app.js"_ allows us to use the npm start command instead of having to define our starting point like before - _node app.js_
 
 
-### 03 Add Routing (Hello World)
+## 03 Add Routing (Hello World)
 
 When accessing the home route (http://localhost:3000/), we want to send a Hello World, to test our routing. Then we add another route - /books to the _app.js_ file:
 

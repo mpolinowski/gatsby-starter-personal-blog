@@ -23,6 +23,17 @@ hero: photo-34364880182_fe2d33582b_o.jpg
 * [Part V](/node-express-mongodb-part-v/) deals with [Passport.js](http://www.passportjs.org) user authentication and [MongoDB](https://www.mongodb.com)
 
 
+<!-- TOC -->
+
+- [01 Adding a Router for the Listview of our Book Page](#01-adding-a-router-for-the-listview-of-our-book-page)
+  - [Adding a Route to Render](#adding-a-route-to-render)
+- [Cleaning up the App File with Routers](#cleaning-up-the-app-file-with-routers)
+- [03 Creating a Single Book by ID Route & View](#03-creating-a-single-book-by-id-route--view)
+- [04 Cleaning up our routes by creating a variable for the NAV element](#04-cleaning-up-our-routes-by-creating-a-variable-for-the-nav-element)
+
+<!-- /TOC -->
+
+
 ## 01 Adding a Router for the Listview of our Book Page
 
 ### Adding a Route to Render

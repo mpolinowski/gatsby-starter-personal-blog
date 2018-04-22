@@ -16,6 +16,20 @@ hero: photo-34221454260_1d42dbe06f_o.png
 
 # Next.js
 
+
+<!-- TOC -->
+
+- [Next.js](#nextjs)
+  - [On my way to figure out to find the best way to deploy a React App](#on-my-way-to-figure-out-to-find-the-best-way-to-deploy-a-react-app)
+  - [01 Basic Setup](#01-basic-setup)
+  - [02 Styling](#02-styling)
+  - [Example](#example)
+  - [03 Bootstrap 4](#03-bootstrap-4)
+  - [04 Advanced Routing](#04-advanced-routing)
+
+<!-- /TOC -->
+
+
 ## On my way to figure out to find the best way to deploy a React App
 
 01. [create-react-app](https://github.com/mpolinowski/react-router-4)

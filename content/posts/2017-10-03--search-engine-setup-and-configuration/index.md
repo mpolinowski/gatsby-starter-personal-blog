@@ -10,6 +10,25 @@ hero: photo-34139903180_fd0c397abc_o.jpg
 ![Search Engine Setup and Configuration](./photo-34139903180_fd0c397abc_o.jpg)
 
 
+<!-- TOC -->
+
+- [01 Search Engine Setup and Configuration](#01-search-engine-setup-and-configuration)
+  - [Installing Elasticsearch 6.x on CentOS](#installing-elasticsearch-6x-on-centos)
+    - [Import the Elasticsearch PGP Key](#import-the-elasticsearch-pgp-key)
+  - [Installing from the RPM repository](#installing-from-the-rpm-repository)
+    - [Running Elasticsearch with _systemd_](#running-elasticsearch-with-_systemd_)
+    - [Checking that Elasticsearch is running](#checking-that-elasticsearch-is-running)
+    - [Configuring Elasticsearch](#configuring-elasticsearch)
+  - [Installing Kibana 6.x on CentOS](#installing-kibana-6x-on-centos)
+    - [Running Kibana with _systemd_](#running-kibana-with-_systemd_)
+  - [Install X-Pack](#install-x-pack)
+    - [Elasticsearch Security](#elasticsearch-security)
+    - [Kibana Security](#kibana-security)
+  - [Enabling Anonymous Access](#enabling-anonymous-access)
+
+<!-- /TOC -->
+
+
 ## 01 Search Engine Setup and Configuration
 
 ### Installing Elasticsearch 6.x on CentOS

@@ -23,13 +23,6 @@ This App was created in several steps:
 
 - [Node/Express Wiki/Knowledgebase](#nodeexpress-wikiknowledgebase)
   - [3 Install and Configure Gulp.js](#3-install-and-configure-gulpjs)
-  - [4 Install NGINX on a CentOS 7 web server](#4-install-nginx-on-a-centos-7-web-server)
-  - [5 Install Node.js on a CentOS 7 web server](#5-install-nodejs-on-a-centos-7-web-server)
-  - [6 Clone Repo from Git](#6-clone-repo-from-git)
-  - [7 Run the app as a service (PM2)](#7-run-the-app-as-a-service-pm2)
-  - [8 Install Java](#8-install-java)
-  - [9 Install Elasticsearch](#9-install-elasticsearch)
-  - [10 Install Kibana](#10-install-kibana)
 
 <!-- /TOC -->
 

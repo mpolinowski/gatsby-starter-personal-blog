@@ -23,6 +23,14 @@ hero: photo-34605589525_8f576ddb84_o.jpg
 * [Part V](/node-express-mongodb-part-v/) deals with [Passport.js](http://www.passportjs.org) user authentication and [MongoDB](https://www.mongodb.com)
 
 
+<!-- TOC -->
+
+- [01 Add a Templating Engine - EJS](#01-add-a-templating-engine---ejs)
+- [02 Adding a Page Navigation with Routing](#02-adding-a-page-navigation-with-routing)
+
+<!-- /TOC -->
+
+
 ## 01 Add a Templating Engine - EJS
 
 EJS combines data and a template to produce HTML. JavaScript between <% %> is executed. JavaScript between <%= %> adds strings to your HTML and <%- %> can contain HTML formated content. To add our templating engine we first have to install it with npm install --save ejs. Now we add the engine to our app.js file:

@@ -11,6 +11,18 @@ hero: photo-34445485832_9f5f2a9aea_o.png
 ![Tanna Island, Vanuatu](./photo-34445485832_9f5f2a9aea_o.png)
 
 
+<!-- TOC -->
+
+- [elasticsearch-react-example](#elasticsearch-react-example)
+- [Prerequisites](#prerequisites)
+- [To run the example:](#to-run-the-example)
+- [Original createClass Syntax](#original-createclass-syntax)
+- [Update to a Elasticsearch 5.x index](#update-to-a-elasticsearch-5x-index)
+- [ES6 Class Syntax](#es6-class-syntax)
+
+<!-- /TOC -->
+
+
 ## elasticsearch-react-example
 An example project showing how to use ElasticSearch with React - based on [elasticsearch-react-example](https://github.com/scotchfield/elasticsearch-react-example) by [scotchfield](https://github.com/scotchfield)
 

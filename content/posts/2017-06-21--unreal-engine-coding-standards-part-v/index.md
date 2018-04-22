@@ -16,6 +16,31 @@ hero: photo-33795443263_fcb0014fd2_o.jpg
 > The following is the commented Course Journal:
 
 
+<!-- TOC -->
+
+- [Using using for Type Aliases](#using-using-for-type-aliases)
+- [Using struct for Simple Types](#using-struct-for-simple-types)
+- [Using if Statements in C++](#using-if-statements-in-c)
+- [Debugging 101](#debugging-101)
+- [A Place for Everything](#a-place-for-everything)
+- [Introducing enumerations](#introducing-enumerations)
+- [Writing Error Checking Code](#writing-error-checking-code)
+- [Using switch Statements](#using-switch-statements)
+- [Warm Fuzzy Feelings](#warm-fuzzy-feelings)
+- [Handling Game Win Condition](#handling-game-win-condition)
+- [Win or Lose "Screen"](#win-or-lose-screen)
+- [Introducing Big O Notation](#introducing-big-o-notation)
+- [TMap and map Data Structures](#tmap-and-map-data-structures)
+- [Range-based for Loop](#range-based-for-loop)
+- [Design a Helper Function](#design-a-helper-function)
+- [Playtesting Your Game](#playtesting-your-game)
+- [Difficulty & Play Tuning](#difficulty--play-tuning)
+- [Polishing & Packaging](#polishing--packaging)
+- [Section 2 Wrap-Up](#section-2-wrap-up)
+
+<!-- /TOC -->
+
+
 ### Using using for Type Aliases
 
 + We’re substituting types to be “Unreal ready”

@@ -23,6 +23,17 @@ hero: photo-34445481222_d3b67160da_o.jpg
 * [Part V](/node-express-mongodb-part-v/) deals with [Passport.js](http://www.passportjs.org) user authentication and [MongoDB](https://www.mongodb.com)
 
 
+<!-- TOC -->
+
+- [01 Add Bower to the Project](#01-add-bower-to-the-project)
+- [02 Add Gulp to the Project](#02-add-gulp-to-the-project)
+  - [Inject Bower Dependencies with Wiredep](#inject-bower-dependencies-with-wiredep)
+  - [Inject with Gulp-Inject](#inject-with-gulp-inject)
+  - [Auto-restart with Nodemon](#auto-restart-with-nodemon)
+
+<!-- /TOC -->
+
+
 ## 01 Add Bower to the Project
 
 First install Bower globally with _npm install bower -g_. Then do a bower init to the app directory (creation of bower.json).

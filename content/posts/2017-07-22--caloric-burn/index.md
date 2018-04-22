@@ -19,6 +19,23 @@ hero: photo-34221441540_627d018c4b_o.png
 [Github](https://github.com/mpolinowski/caloric-burn)
 
 
+<!-- TOC -->
+
+- [Server Setup](#server-setup)
+  - [Server Dependencies Installation](#server-dependencies-installation)
+  - [Test the Server](#test-the-server)
+- [Frontend Client Setup](#frontend-client-setup)
+  - [create-react-app](#create-react-app)
+    - [react-scripts](#react-scripts)
+  - [Concurrently](#concurrently)
+  - [React Interface](#react-interface)
+  - [Setting up the proxy](#setting-up-the-proxy)
+- [Test your App](#test-your-app)
+- [Deployment](#deployment)
+
+<!-- /TOC -->
+
+
 First, git clone this repository and cd into that directory.
 
 This is where the server lives (server.js). Inside of the db folder is a sqlite database containing the nutrition data.
