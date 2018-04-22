@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import injectSheet from "react-jss";
 
-import AlgoliaIcon from "../../images/svg-icons/algolia.svg";
 import ReactIcon from "../../images/svg-icons/react.svg";
 import GraphqlIcon from "../../images/svg-icons/graphql.svg";
 import JssIcon from "../../images/svg-icons/jss.svg";
@@ -58,10 +57,9 @@ const StackIcons = props => {
     { name: "jss", url: "http://cssinjs.org/", comp: JssIcon },
     { name: "material-ui", url: "https://material-ui-next.com/", comp: MaterialUiIcon },
     { name: "redux", url: "https://redux.js.org/", comp: ReduxIcon },
-    { name: "algolia", url: "https://www.algolia.com/", comp: AlgoliaIcon },
     { name: "webpack", url: "https://webpack.js.org/", comp: WebpackIcon },
     { name: "babel", url: "https://babeljs.io/", comp: BabelIcon },
-    { name: "netlify", url: "https://www.netlify.com/", comp: GithubIcon }
+    { name: "github pages", url: "https://pages.github.com/", comp: GithubIcon }
   ];
 
   return (
