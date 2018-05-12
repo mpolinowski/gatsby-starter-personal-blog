@@ -24,6 +24,6 @@ module.exports = {
   manifestDisplay: "standalone",
   // social
   authorSocialLinks: [
-    { name: "github", url: "https://github.com/mpolinowski" }
+    { name: "github", url: "https://resume.github.io/?mpolinowski" }
   ]
 };
