@@ -18,7 +18,7 @@ export default {
      * `article` contexts in Chrome, Firefox, and Safari.
      */
     h1: {
-      fontSize: "2em",
+      fontSize: "1em",
       margin: [["0.67em", 0]]
     },
 
@@ -38,7 +38,7 @@ export default {
      */
     pre: {
       fontFamily: "monospace, monospace" /* 1 */,
-      fontSize: "1em" /* 2 */
+      fontSize: "0.75em" /* 2 */
     },
 
     /**
@@ -77,7 +77,7 @@ export default {
      */
     "code, kbp, samp": {
       fontFamily: "monospace, monospace" /* 1 */,
-      fontSize: "1em" /* 2 */
+      fontSize: "0.9em" /* 2 */
     },
 
     /**
@@ -99,7 +99,7 @@ export default {
      * Add the correct font size in all browsers.
      */
     small: {
-      fontSize: "80%"
+      fontSize: "65%"
     },
 
     /**
@@ -107,7 +107,7 @@ export default {
      * all browsers.
      */
     "sub, sup": {
-      fontSize: "75%",
+      fontSize: "65%",
       lineHeight: 0,
       position: "relative",
       verticalAlign: "baseline"
@@ -323,13 +323,13 @@ export default {
 
     html: {
       boxSizing: "border-box",
-      "-webkit-text-size-adjust": "100%",
+      "-webkit-text-size-adjust": "75%",
       "-moz-text-size-adjust": "none",
-      "-ms-text-size-adjust": "100%",
+      "-ms-text-size-adjust": "75%",
       fontFamily: theme.base.fonts.unstyledFamily,
       background: theme.base.background,
       lineHeight: "1.15",
-      textSizeAdjust: "100%"
+      textSizeAdjust: "75%"
     },
     "html.wf-active": {
       fontFamily: theme.base.fonts.styledFamily
@@ -361,7 +361,7 @@ export default {
       position: "relative"
     },
     "h1, h2, h3": {
-      fontWeight: 300
+      fontWeight: 200
     },
     a: {
       background: "transparent",
