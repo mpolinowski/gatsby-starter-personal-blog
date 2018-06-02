@@ -11,7 +11,7 @@ hero: photo-19196703263_69f9f0df5f_o.png
 
 As an example, we are going to use [express-generator](https://expressjs.com/en/starter/generator.html) to scaffold a [Node.js](https://nodejs.org) Web App and wrap it's source code into a Docker Container.
 
-[Github Repository](https://github.com/mpolinowski/express-generator-app-docker)
+[Github Repository](https://github.com/mpolinowski/express-generator-dockerrized)
 
 
 <!-- TOC -->
