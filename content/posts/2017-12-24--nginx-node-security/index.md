@@ -34,6 +34,7 @@ hero: photo-34139903180_fd0c397abc_o.png
       - [Systemd](#systemd)
       - [Cron.d](#crond)
     - [TLS-SNI-01 challenge Deactivated](#tls-sni-01-challenge-deactivated)
+    - [Troubleshooting](#troubleshooting)
 
 <!-- /TOC -->
 
@@ -568,6 +569,7 @@ IMPORTANT NOTES:
 Go to _/etc/systemd/system/_ and create the following two files
 
 _certbot-nginx.service_
+
 ```
 [Unit]
 Description=Renew Certbot certificates (nginx)
@@ -579,6 +581,7 @@ ExecStart=/usr/bin/certbot-2 renew --deploy-hook "systemctl reload nginx"
 ```
 
 _certbot-nginx.timer_
+
 ```
 [Unit]
 Description=Renew Certbot certificate (nginx)
@@ -592,7 +595,9 @@ RandomizedDelaySec=86400
 WantedBy=multi-user.target
 ```
 
+
 Now activate the service
+
 
 ```
 $ systemctl daemon-reload
@@ -604,6 +609,7 @@ $ systemctl enable --now certbot-nginx.timer  # to use the timer
 #### Cron.d
 
 Add Certbot renewal to Cron.d in /etc/cron.d - we want to run it twice daily at 13:22 and 04:17:
+
 
 ```
 # Example of job definition:
@@ -619,29 +625,37 @@ Add Certbot renewal to Cron.d in /etc/cron.d - we want to run it twice daily at 
 22 13 * * * /usr/bin/certbot-2 renew --quiet
 ```
 
+
 ### TLS-SNI-01 challenge Deactivated
 
 If you are receiving the following error when trying to add a certificate to your domain:
+
 
 ```
 Client with the currently selected authenticator does not support any combination of challenges that will satisfy the CA.
 ```
 
+
 Follow the Instructions given [here](https://community.letsencrypt.org/t/solution-client-with-the-currently-selected-authenticator-does-not-support-any-combination-of-challenges-that-will-satisfy-the-ca/49983) and if you’re serving files for that domain out of a directory on that server, you can run the following command:
+
 
 ```
 sudo certbot --authenticator webroot --webroot-path <path to served directory> --installer nginx -d <domain>
 ```
 
+
 If you’re not serving files out of a directory on the server, you can temporarily stop your server while you obtain the certificate and restart it after Certbot has obtained the certificate. This would look like:
+
 
 ```
 sudo certbot --authenticator standalone --installer nginx -d <domain> --pre-hook "service nginx stop" --post-hook "service nginx start"
 ```
 
+
 e.g.
 
 1. Create your virtual server conf - the given config below routes an node/express app running on localhost:7777 with a public directory in /opt/mysite-build/app :
+
 
 ```nginx
 server {
@@ -689,12 +703,67 @@ server {
 }
 ```
 
+
 Test your your site by opening my.domain.com inside your browser - you should be automatically redirected to https://my.domain.com and be given a certificate warning. Click to proceed anyway to access your site.
 
 Now run:
+
 
 ```
 sudo certbot --authenticator webroot --webroot-path /opt/mysite-build/app --installer nginx -d my.domain.com
 ```
 
+
 certbot will modify your NGINX config automatically!
+
+
+### Troubleshooting
+
+You can test run the auto renewal with the following command:
+
+
+```bash
+certbot renew --dry-run
+```
+
+
+This will show you if your certificate would be renewed automatically or not. The latter looks like this:
+
+
+![Certbot Error](./certbot_01.png)
+
+
+Trying to renew or repair the certificate by typing `certbot renew` and choosing the problematic cert did not solve the problem - for some reason the script could not restart NGINX afterwards and caused the webserver to crash. There is a script to remove the cert:
+
+
+```bash
+certbot delete
+```
+
+
+But this did not remove the certbot entries inside the NGINX server block - causing the webserver to crash again:
+
+
+```bash
+ssl_certificate /etc/letsencrypt/live/wiki.instar.fr/fullchain.pem; # managed by Certbot
+ssl_certificate_key /etc/letsencrypt/live/wiki.instar.fr/privkey.pem; # managed by Certbot
+```
+
+
+After manually removing them and running certbot again to add a certificate:
+
+
+```bash
+certbot --nginx
+```
+
+
+![Certbot: Install Certificate](./certbot_02.png)
+
+
+![Certbot: Install Certificate](./certbot_03.png)
+
+...everything seems to be fine now (?)
+
+
+![Certbot: Install Certificate](./certbot_04.png)
