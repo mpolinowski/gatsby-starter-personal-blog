@@ -31,6 +31,10 @@ The performance-based Red Hat Certified Engineer exam (EX300) tests to determine
   - [Setting Rich Rules](#setting-rich-rules)
   - [NAT and Port Forwarding](#nat-and-port-forwarding)
 - [Samba File sharing](#samba-file-sharing)
+- [Email Server](#email-server)
+  - [Installing Postfix and Dovecot](#installing-postfix-and-dovecot)
+  - [Setting up SSL certificate](#setting-up-ssl-certificate)
+  - [Postfix Configuration](#postfix-configuration)
 - [Network Interface Bonding](#network-interface-bonding)
   - [Types of Bonding](#types-of-bonding)
   - [Enabling Bonding on CentOS 7](#enabling-bonding-on-centos-7)
@@ -384,6 +388,107 @@ As well as under Android with Apps like the [X-plore File Manager](https://play.
 
 ---
 
+
+
+## Email Server
+
+To use an email service we first have to set a hostname for our CentOS server. You can check for your servers hostname with `hostnamectl`:
+
+
+---
+
+![Red Hat Certified Engineer](./CentOS_30.png)
+
+---
+
+
+For internal networking, change the host that is associated with the main IP address for your server found at `/etc/hosts` - make sure to set a static IP address for your server first ( -> `nano /etc/sysconfig/network-scripts/ifcfg-enp3s0`) :
+
+
+---
+
+![Red Hat Certified Engineer](./CentOS_31.png)
+
+---
+
+
+To set a hostname use `hostnamectl set-hostname your-new-hostname`, e.g. :
+
+```
+hostnamectl set-hostname instar.centos.mail
+systemctl reboot
+```
+
+### Installing Postfix and Dovecot
+
+[Postfix](http://www.postfix.org/postconf.5.html) architecture is based on a loose composition of services that receive emails and pass them on to other services (with services like __SMTP__ on the receiving outer edge). Postfix itself implements the core requirements to receive, route, and deliver mail, and relies on third-party extensions to do the rest.
+
+
+[Dovecot](https://wiki2.dovecot.org) is an open source IMAP and POP3 email server for Linux/UNIX-like systems, written with security primarily in mind. Dovecot is an excellent choice for both small and large installations. It's fast, simple to set up, requires no special administration and it uses very little memory.
+
+```
+yum install -y postfix dovecot
+```
+
+### Setting up SSL certificate
+
+For SSL, you need a certificate and a private key. In this tutorial, we're going to assume that the certificate is saved in `/etc/ssl/certs/mailcert.pem` and the key is saved in `/etc/ssl/private/mail.key`. Make sure the key is only readable by the root user!
+
+
+Creating a self-signed test certificate is as easy as executing:
+
+
+```bash
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/mail.key -out /etc/ssl/certs/mailcert.pem
+```
+
+and leaving the default values in by just hitting enter on all questions asked. Most CAs will require you to submit a certificate signing request. (CSR) You can generate one like this:
+
+
+```bash
+openssl req -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/mail.key -out mailcert.csr
+```
+
+
+### Postfix Configuration
+
+Postfix has two main config files: `/etc/postfix/main.cf`, which specifies what you would think of as config options, and `/etc/postfix/master.cf`, which specifies the services postfix should run.
+
+First, configure the master.cf file (`nano /etc/postfix/master.cf`). Uncomment the "smtpd" instance called "submission" that will take mail from trusted clients for delivery to the world at large, which we don't allow for anyone else. And add options to enable SASL :
+
+
+
+```
+submission inet n       -       n       -       -       smtpd
+  -o syslog_name=postfix/submission
+  -o smtpd_tls_wrappermode=no
+  -o smtpd_tls_security_level=encrypt
+  -o smtpd_sasl_auth_enable=yes
+  -o smtpd_reject_unlisted_recipient=no
+  -o smtpd_recipient_restrictions=permit_sasl_authenticated,reject
+  -o milter_macro_daemon_name=ORIGINATING
+  -o smtpd_sasl_type=dovecot
+  -o smtpd_sasl_path=private/auth
+```
+
+The -o ... options override the settings that are taken from defaults or define in the config, which we'll set later.
+This enables the "submission" daemon with TLS to secure the outer connection, and dovecot-mediated SASL to check the username and password of connecting clients.
+
+
+The important detail is one that can't be seen: The `smtpd_recipient_restrictions` is missing `reject_unauth_destination`, which is present as a default and restricts relaying.
+
+
+---
+
+![Red Hat Certified Engineer](./CentOS_32.png)
+
+---
+
+
+Now open the main configuration file `nano /etc/postfix/main.cf` and delete its content - better make a copy before you do that `cp /etc/postfix/main.cf /etc/postfix/main.cf.bak`. Let's first set the network information:
+
+
+<!-- tbc -> https://www.digitalocean.com/community/tutorials/how-to-set-up-a-postfix-e-mail-server-with-dovecot -->
 
 
 ## Network Interface Bonding
