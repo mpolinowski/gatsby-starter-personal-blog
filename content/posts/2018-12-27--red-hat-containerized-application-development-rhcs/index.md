@@ -35,17 +35,25 @@ Technologies used:
 - [Network Time Protocol Service](#network-time-protocol-service)
 - [Setting a Hostname](#setting-a-hostname)
 - [FirewallD](#firewalld)
-  - [On Master Node](#on-master-node)
-  - [On Worker Nodes](#on-worker-nodes)
+    - [Disable SELinux Enforcement](#disable-selinux-enforcement)
+    - [Add a FirewallD Service](#add-a-firewalld-service)
 - [Install Docker & Kuberenetes on CentOS](#install-docker--kuberenetes-on-centos)
-  - [Configuring the Master Server](#configuring-the-master-server)
-  - [Configuring Nodes](#configuring-nodes)
-    - [Install Docker & Kuberenetes on Debian](#install-docker--kuberenetes-on-debian)
+    - [Configuring the Master Server](#configuring-the-master-server)
+    - [Configuring Nodes](#configuring-nodes)
+        - [Install Docker & Kuberenetes on Debian](#install-docker--kuberenetes-on-debian)
 - [Working with Containers](#working-with-containers)
-  - [Provisioning a MySQL Database](#provisioning-a-mysql-database)
-  - [Connecting to your MySQL Database](#connecting-to-your-mysql-database)
+    - [Provisioning a MySQL Database](#provisioning-a-mysql-database)
+    - [Connecting to your MySQL Database](#connecting-to-your-mysql-database)
 - [Linking Containers](#linking-containers)
-  - [Accessing a Container](#accessing-a-container)
+- [Accessing a Container](#accessing-a-container)
+- [Container Logs](#container-logs)
+- [Listening to Docker Events](#listening-to-docker-events)
+- [Inspect Docker Container](#inspect-docker-container)
+- [Exposing Containers](#exposing-containers)
+- [Persistent Storage for Containers](#persistent-storage-for-containers)
+    - [Shared persistent Storage Volumes](#shared-persistent-storage-volumes)
+- [Host and Container Basic Security](#host-and-container-basic-security)
+- [Orchestrating Containers Using Kubernetes](#orchestrating-containers-using-kubernetes)
 
 <!-- /TOC -->
 
@@ -98,30 +106,58 @@ You can test if the hostname is used by pinging it:
 
 ## FirewallD
 
-Configure FirewallD for Kubernetes to work correctly:
+### Disable SELinux Enforcement
 
-### On Master Node
+Edit `nano /etc/selinux/config` and set `SELINUX=permissive` on both the master and minion servers - then reboot the servers.
+
+
+### Add a FirewallD Service
+
+Configure FirewallD for Kubernetes to work correctly. First download the k8s-master.xml and k8s-worker.xml files to `cd /etc/firewalld/services` on your master and minion server:
 
 ```bash
+wget https://raw.githubusercontent.com/mpolinowski/k8s-firewalld/master/k8s-master.xml
+
+wget https://raw.githubusercontent.com/mpolinowski/k8s-firewalld/master/k8s-worker.xml
+
+firewall-cmd --reload
+```
+
+
+__On Master Node__
+
+```bash
+firewall-cmd --add-service=k8s-master --zone=public --permanent
+```
+
+<!-- ```bash
 firewall-cmd --permanent --add-port=2370/tcp
-firewall-cmd --permanent --add-port=6443/tcp
 firewall-cmd --permanent --add-port=2379-2380/tcp
+firewall-cmd --permanent --add-port=6443/tcp
+firewall-cmd --permanent --add-port=8472/udp
 firewall-cmd --permanent --add-port=10250/tcp
 firewall-cmd --permanent --add-port=10251/tcp
 firewall-cmd --permanent --add-port=10252/tcp
 firewall-cmd --permanent --add-port=10255/tcp
 firewall-cmd --reload
-```
+``` -->
 
-### On Worker Nodes
+__On Minion Nodes__
 
 ```bash
+firewall-cmd --add-service=k8s-worker --zone=public --permanent
+```
+
+<!-- ```bash
+firewall-cmd --add-masquerade --permanent
 firewall-cmd --permanent --add-port=2379/tcp
 firewall-cmd --permanent --add-port=2370/tcp
+firewall-cmd --permanent --add-port=8472/udp
+firewall-cmd --permanent --add-port=10250/tcp
 firewall-cmd --permanent --add-port=10251/tcp
 firewall-cmd --permanent --add-port=10255/tcp
 firewall-cmd --reload
-```
+``` -->
 
 
 ## Install Docker & Kuberenetes on CentOS
@@ -419,7 +455,7 @@ docker run --detach --name=test1-wordpress --link test1-mysql:mysql -e="WORDPRES
 ---
 
 
-### Accessing a Container
+## Accessing a Container
 
 We can now access the Wordpress container and run a bash terminal to configure the Wordpress installation with `docker exec -it test1-wordpress bash`:
 
@@ -457,6 +493,215 @@ You can also go back into the Wordpress container `docker exec -ti -t test1-word
 ---
 
 ![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_20.png)
+
+---
+
+
+## Container Logs
+
+To access the [log outputs](https://docs.docker.com/engine/reference/commandline/logs/) of detached containers run `docker logs <container name>`:
+
+```bash
+docker logs test1-wordpress //full logs
+docker logs -f test1-wordpress  //follow log - live streaming
+docker logs --tail 5 test1-wordpress  //only the last five lines
+```
+
+
+## Listening to Docker Events
+
+Get real time [events](https://docs.docker.com/engine/reference/commandline/events/) from the server with the following command `docker events [OPTIONS]`:
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_21.png)
+
+---
+
+
+```bash
+docker events --since '2018-12-31T13:23:37'  //Show logs since timestamp
+docker events --until '42m'  //Show logs before a timestamp
+docker events --filter "name=test1-wordpress" --until '10m'  //filter by image name
+docker events --filter "image=mysql" --until '10m'  //filter by image type
+```
+
+
+## Inspect Docker Container
+
+Return low-level [information on Docker objects](https://docs.docker.com/engine/reference/commandline/inspect/) with `docker inspect [OPTIONS] NAME|ID [NAME|ID...]`. To get the full information simply run `docker inspect test1-mysql` - to get a specific line, just query a value out of the JSON array:
+
+
+```bash
+docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' test1-mysql  //Get an instance’s IP address
+docker inspect --format='{{range .NetworkSettings.Networks}}{{.MacAddress}}{{end}}' test1-mysql  //Get an instance’s MAC address
+docker inspect --format='{{.LogPath}}' test1-mysql  //Get an instance’s log path
+docker inspect --format='{{.Id}}' test1-mysql  //Get Image ID
+```
+
+
+## Exposing Containers
+
+You can use the publish option to expose ports from the container to the outside world - this is one method to share data between containers:
+
+
+```
+docker run --detach --name=test1-mysql --env="MYSQL_ROOT_PASSWORD=12345678" --publish 6603:3306 mysql --default-authentication-plugin=mysql_native_password
+```
+
+This will expose the internal port 3306 of the MySQL container to be reachable over port 6603 on the network. You are now able to connect to your MySQL database with `mysql -h 192.168.2.111 -p -P6603` with `-h` host=local IP of your Centos Server and `-P` port=exposed port of your docker container:
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_22.png)
+
+---
+
+
+## Persistent Storage for Containers
+
+You can us the [volume command to create](https://docs.docker.com/engine/reference/commandline/volume_create/) a volume that holds data for attached containers:
+
+
+```bash
+docker volume create [OPTIONS] [VOLUME]     //create volumes
+docker volume inspect [OPTIONS] VOLUME [VOLUME...]      //Inspect volumes
+docker volume ls [OPTIONS]      //List volumes
+docker volume prune [OPTIONS]       //Remove all unused local volumes
+docker volume rm [OPTIONS] VOLUME [VOLUME...]       //Remove one or more volumes
+```
+
+We can now create a volume with the name __ShareVol1__ and extend an Ubuntu container with it:
+
+```bash
+docker volume create --name ShareVol1
+docker run -ti -v ShareVol1:/sharevol1 ubuntu
+```
+
+You now inside the Ubuntu image and can use the `df -h` command to check if the `/sharevol1` was successfully mounted:
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_23.png)
+
+---
+
+
+We can now create a file inside the shared space and exit the container:
+
+```bash
+cd /sharevol1
+touch test1
+echo "hello world" > test1
+exit
+```
+
+To find out where the data inside the volume was stored, we can use the `docker volume inspect` command and verify that the __test1__ file was actually stored in that directory:
+
+
+```bash
+docker volume inspect ShareVol1
+cd /var/lib/docker/volumes/ShareVol1/_data
+cat test1
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_24.png)
+
+---
+
+
+### Shared persistent Storage Volumes
+
+A volume can extend more than one Docker container, enabling shared usage of data. First create an new volume and an Ubuntu container that uses it:
+
+
+```bash
+docker volume create --name NewVol1
+docker run -ti -v NewVol1:/newvol1 --name=UbuntuOne ubuntu
+```
+
+Then open a second terminal on the same host and mount that volume from __UbuntuOne__ into a second Ubuntu container:
+
+```bash
+docker run -ti --volumes-from UbuntuOne --name=UbuntuTwo ubuntu
+```
+
+Create a file inside the shared volume on __UbuntuTwo__:
+
+```bash
+cd /newvol1
+touch test1
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_25.png)
+
+---
+
+
+And this file will show up inside the shared volume inside the __UbuntuOne__ container:
+
+```bash
+cd /newvol1
+ll
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_26.png)
+
+---
+
+
+## Host and Container Basic Security
+
+* Docker always runs as root - when you are in a docker group, you effectively have root access to everything. To secure your server, you should run Docker inside a VM and limit the number of active processes inside a container with `docker run --pids-limit=64`.
+
+* You can also use [apparmor](https://docs.docker.com/engine/security/apparmor/), [seccomp](https://docs.docker.com/engine/security/seccomp/) or [SELinux](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/container_security_guide/docker_selinux_security_policy) to secure your application.
+
+<!-- https://cloud.google.com/container-optimized-os/docs/how-to/secure-apparmor
+https://medium.com/lucjuggery/docker-apparmor-30-000-foot-view-60c5a5deb7b
+https://medium.com/lucjuggery/docker-selinux-30-000-foot-view-30f6ef7f621 -->
+
+* Control privileges of new processes with `docker run --security-opt=no-new-privileges`
+
+* Turn of the inter-process communication with `docker --ipc=false`
+
+* Disable iptables changes with `docker --iptables=false`
+
+* Run Docker as read-only `docker run --read-only`
+
+* Mount Volumes as read-only `docker run -v $(pwd)/secrets:/secrets:ro ubuntu`
+
+* Use a hash to pull images `docker pull debian@sha265:a35465875...`
+
+* Limit memory and CPU sharing `docker -c 512 -mem 512m`
+
+* Define and run a user in your Dockerfile, so you are not running as root inside the container `RUN groupadd -r user && useradd -r -g user user`
+
+
+## Orchestrating Containers Using Kubernetes
+
+We now want to run two containers on our node server - the minion that provides the docker runtime environment for the containers - and manage them in pods from our Kubernetes master server. Go to your master server and use Kubernetes to run a Wordpress container:
+
+```bash
+kubectl run wordpress --image=wordpress --port=80 --hostport=81
+kubectl get pods
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_27.png)
 
 ---
 
