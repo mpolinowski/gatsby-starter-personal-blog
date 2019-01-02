@@ -187,7 +187,7 @@ Now we need to edit the __Kubernetes config__ `nano /etc/kubernetes/config` and 
 ```
 # How the controller-manager, scheduler, and proxy find the apiserver
 KUBE_MASTER="--master=http://instar.centos.master:8080"
-KUBE_ETCD_SERVERS="--etcd-servers=http://instar.centos.master:2370"
+KUBE_ETCD_SERVERS="--etcd-servers=http://instar.centos.master:2379"
 ```
 
 
