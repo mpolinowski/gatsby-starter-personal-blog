@@ -54,6 +54,15 @@ Technologies used:
     - [Shared persistent Storage Volumes](#shared-persistent-storage-volumes)
 - [Host and Container Basic Security](#host-and-container-basic-security)
 - [Orchestrating Containers Using Kubernetes](#orchestrating-containers-using-kubernetes)
+- [Working with Images](#working-with-images)
+    - [Build a Custom Image Container](#build-a-custom-image-container)
+- [Managing Images](#managing-images)
+    - [Image Lifecycle](#image-lifecycle)
+    - [Application Workflow](#application-workflow)
+- [Multiple Container Application Deployment](#multiple-container-application-deployment)
+    - [Database Installation](#database-installation)
+    - [Wordpress Configuration](#wordpress-configuration)
+    - [Creating the Dockerfile](#creating-the-dockerfile)
 
 <!-- /TOC -->
 
@@ -705,3 +714,553 @@ kubectl get pods
 
 ---
 
+__tbc...__
+
+
+## Working with Images
+
+So far we only worked with containers from the Docker Hub. Lets build our own Docker Container from a custom Image file - or Dockerfile. Create the following folder structure inside your home dir `~/docker/build/test1` and enter it. Now create the following file `nano Dockerfile`:
+
+```dockerfile
+# a test file
+FROM ubuntu
+RUN apt-get update
+
+ADD files* /mydir1/
+ADD test/ /test2/
+
+WORKDIR /path
+USER administrator
+
+CMD "Echo" "Hello from your Docker Container!"
+
+ENTRYPOINT echo
+
+ONBUILD ADD . /app/src
+ONBUILD RUN /usr/local/bin/python-build --dir /app/src
+
+EXPOSE 8080
+
+ENV NAME_FOR_FILE "foo bar"
+ENV SERVER_NO 4
+ENV NEW_WORK_DIR /folder1
+
+WORKDIR ${new_work_dir}
+# Or just WORKDIR $new_work_dir
+
+ENV abc=hello
+ENV abc=bye def=$abc
+ENV ghi=$abc
+# this results in def=hello and ghi=bye
+```
+
+* The __FROM__ statement has to be on top of the _Dockerfile_ to signify the image we want our container to be based on.
+
+* The next line starts with __RUN__, which gives a command that is executed during the build process.
+
+* The __ADD__ command gets a source and a destination argument and allows you to copy files from a source onto the container file system. If the source is an URL, the content will be downloaded during build. If it is a local folder, the content of the folder will be copied - the path has to be relative to the location of the dockerfile in this case. The command also accepts archives that will be unpacked during build.
+
+* The __COPY__ instruction is similar to the ADD command and copies new files from the source to the container fs. If you have multiple steps that use COPY, use the instruction individually so that each build steps cache is only invalidated if those files change.
+    * The __difference to the ADD command__ is that you cannot use COPY for sources on remote URLs and for archive extractions. You should use copy over ADD when possible.
+
+* __WORKDIR__ is a directive that is used to set where the command defined with CMD is to be used. It can also set the destination of a following COPY command. Multiple working directories can be used - if a relative path is used, the path will be set in relation to the previous WORKDIR.
+
+* The __USER__ directive is used to set the UID or username which is to run the container based on the image file.
+
+* __CMD__ is similar to RUN and can be used to execute a specific command. But the command is __run after the build__ when the container is instantiated.
+
+* The __ENTRYPOINT__ sets the default application that is started when the container is run. Both the CMD and ENTRYPOINT command allow you to specify a startup command for an image.
+  *  CMD can be overwritten with the `docker run` command - to overwrite the ENTRYPOINT you will have to add the `--entrypoint` flag to do that. Use the ENTRYPOINT when you are building a container that is exclusively used to run a specific application.
+
+* __ONBUILD__ adds a trigger instruction to be executed when the image is used as a base for another build and _does not affect the current build_. Any build instruction can be registered as a trigger.
+
+* __EXPOSE__ is used to a specific port and enables networking from inside the container, as well as netwroking between containers on the docker host. You can also use the `-p` flag with the `docker run` command - but it adds transparency when you use EXPOSE inside your image file instead.
+
+* __ENV__ is used to set environment variables and is formatted as a key=value pair. The variable can be accessed by scripts from inside the container.
+
+* __VOLUME__ creates a mount point inside the container for externally mounted volumes from the docker host or containers. The value can be a JSON array or plain string with multiple arguments. (see below)
+
+
+```dockerfile
+FROM ubuntu
+RUN mkdir /myvol
+RUN echo "hello world" > /myvol/greeting
+VOLUME /myvol
+```
+
+Put this Dockerfile into the __test1__ folder and build it and run the container with the following commands:
+
+```bash
+docker build -t testvol1 /root/docker/builds/test1
+docker run -ti testvol1 /bin/bash
+```
+
+You can verify that the greeting was written by `cat /myvol/greeting`:
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_28.png)
+
+---
+
+
+The volume also exist on the host system under `/var/lib/docker/volumes` and all data in it will persist, even if the container that created it is purged.
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_29.png)
+
+---
+
+
+### Build a Custom Image Container
+
+* We will create a _tar.gz_ file to use as content for apache.
+* Write a Dockerfile based on the _ubuntu image_:
+  * Add Apache to the image
+  * Extract the content from our archive to the Apache folder
+  * Expose a port to serve the content
+  * Set Apache to start when the container starts
+
+Lets start by creating a folder `mkdir apachewebsite` and adding another folder inside that holds our web content `src` with `nano /root/docker/builds/apachewebsite/src/index.html`:
+
+```html
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Page Title</title>
+  <meta name="description" content="page description">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="apple-touch-icon" href="icon.png">
+  <!-- Place favicon.ico in the root directory -->
+</head>
+
+<body>
+  <!--[if lte IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+  <![endif]-->
+
+  <!-- Add your site or application content here -->
+  <p>Hello world! This is HTML5 Boilerplate.</p>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+  <script
+  src="http://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+</body>
+
+</html>
+```
+
+To compress our website content we can run `tar -czf websitesrc.tar.gz index.html`
+
+
+Now we can add a our docker file `nano Dockerfile` inside the __apachewebsite__ folder `nano /root/docker/builds/apachewebsite/Dockerfile`:
+
+
+```dockerfile
+# This is a template for an httpd hosted static website
+FROM centos
+
+MAINTAINER mpolinowski@gmail.com
+
+RUN yum -y install httpd elinks
+
+ADD ./src/websitesrc.tar.gz /var/www/html
+
+EXPOSE 80
+
+ENTRYPOINT ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+```
+
+To build the image we can now type:
+
+
+```
+docker build -t apachewebsite /root/docker/builds/apachewebsite/
+```
+
+
+And run the docker container with:
+
+
+```
+docker run -tid apachewebsite
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_30.png)
+
+---
+
+
+By using `docker ps` we can see the container was assigned a name of `inspiring_austin`. We can now use `docker inspect inspiring_austin | grep IP` to find out the IP address the container was given:
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_31.png)
+
+---
+
+
+In this case it is the __172.17.0.2__ which we can use with __elinks__ to check if our website is now hosted - `elinks http://172.17.0.2`:
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_32.png)
+
+---
+
+
+To stop and remove the container run the following commands:
+
+```bash
+docker stop inspiring_austin
+docker rm inspiring_austin
+```
+
+
+## Managing Images
+
+### Image Lifecycle
+
+* A need for an image occcurs
+* An Dockerfile is created
+* The docker image is built
+* The docker container is run from it and tested
+* The image is modified where needed
+* The now approved image is moved to production
+* In case of problems the image is send back to be modified
+* An image that is no longer needed is stopped
+* Old unused images are deleted
+
+
+To remove all images and containers on your server run:
+
+```bash
+docker rm `docker ps --no-trunc -aq`
+docker rmi $(docker images -q)
+```
+
+### Application Workflow
+
+* Image Creation
+* Image Tags
+* Push to Registry
+* Pull from Registry
+
+Let's use the centos7-apache image from the last chapter to learn how to add release tags and to publish our image on the Docker Hub:
+
+
+```dockerfile
+# This is a template for an httpd hosted static website
+FROM centos
+
+MAINTAINER mpolinowski@gmail.com
+
+RUN yum -y install httpd elinks
+
+ADD ./src/websitesrc.tar.gz /var/www/html
+
+EXPOSE 80
+
+ENTRYPOINT ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+```
+
+
+I rebuild the image under a different name and with a tag for the Docker Hub repository that I want to push it to as well as giving it a version tag:
+
+
+```bash
+docker build -t mpolinowski/centos7-apache:beta .
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_33.png)
+
+---
+
+
+To upload the image to the [Docker Hub](https://hub.docker.com/) you first need to create an account there. You can then login to your account from your console and push the image:
+
+
+```
+docker login
+docker push mpolinowski/centos7-apache
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_34.png)
+
+---
+
+
+
+The image should now show up in your in your Docker Hub repository list:
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_35.png)
+
+---
+
+
+We can then bump the version to v1 and latest with a rebuild + push:
+
+
+```bash
+docker build -t mpolinowski/centos7-apache:v1 -t mpolinowski/centos7-apache .
+docker push mpolinowski/centos7-apache
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_36.png)
+
+---
+
+
+To pull an image from Docker Hub use the pull command - not adding a tag will always pull the latest version:
+
+
+```
+docker pull mpolinowski/centos7-apache
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_37.png)
+
+---
+
+
+## Multiple Container Application Deployment
+
+I need to build a custom container image for the deployment of an application over multiple containers - this will be a customized Wordpress application hosted with Apache with an MySQL database connection.
+
+
+### Database Installation
+
+Let's first run the MySQL Container on the Minion Server:
+
+
+```bash
+docker run --detach --name=test1-mysql --env="MYSQL_ROOT_PASSWORD=12345678" mysql --default-authentication-plugin=mysql_native_password
+```
+
+
+If we want to allow access to our database from another server, we also need to configure FirewallD:
+
+
+```bash
+firewall-cmd --zone=public --add-service=mysql --permanent
+firewall-cmd --reload
+firewall-cmd --list-services
+```
+
+
+To connect to your database, you first have tp find out the IP address of the mysql container with `docker inspect <name of the container>` (the name can be found with `docker ps`). Then use the mysql client (`yum install -y mysql`) to connect (the password is the root password we set when we ran the container):
+
+
+```sql
+mysql -h 172.17.0.2 -p
+create database wordpress;
+show databases;
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_38.png)
+
+---
+
+
+We now need to create a user for the Wordpress application and exit the container:
+
+
+```sql
+CREATE USER 'wordpress'@'%' IDENTIFIED BY 'newpassword';
+GRANT ALL PRIVILEGES ON wordpress.* TO 'wordpress'@'%';
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_39.png)
+
+---
+
+
+### Wordpress Configuration
+
+We now need to download Wordpress to configure it. We are going to use the configuration file later to modify the default Wordpress Image from Docker Hub:
+
+
+```bash
+mkdir /root/docker/builds/centos7-wordpress-shared
+cd /root/docker/builds/centos7-wordpress-shared
+wget http://wordpress.org/latest.tar.gz
+tar -xvf latest.tar.gz
+cd wordpress
+cp wp-config-sample.php ../
+cd ..
+mv wp-config-sample.php wp-config.php
+```
+
+We now have a copy of the sample configuration file inside the project folder - let's edit it to suit our database setup `nano wp-config.php`:
+
+
+```php
+// ** MySQL settings - You can get this info from your web host ** //
+/** The name of the database for WordPress */
+define('DB_NAME', 'wordpress');
+
+/** MySQL database username */
+define('DB_USER', 'wordpress');
+
+/** MySQL database password */
+define('DB_PASSWORD', 'newpassword');
+
+/** MySQL hostname */
+define('DB_HOST', '172.17.0.2');
+```
+
+The second part we need to change are the unique keys and salts that wordpress uses for it's authentication. You can autogenerate them with the [Wordpress API](https://api.wordpress.org/secret-key/1.1/salt/) - copy and paste them to replace the following block in the config file:
+
+
+```php
+/**#@+
+ * Authentication Unique Keys and Salts.
+ *
+ * Change these to different unique phrases!
+ * You can generate these using the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secre$
+ * You can change these at any point in time to invalidate all existing cookies. This will force all users to$
+ *
+ * @since 2.6.0
+ */
+define('AUTH_KEY',         'put your unique phrase here');
+define('SECURE_AUTH_KEY',  'put your unique phrase here');
+define('LOGGED_IN_KEY',    'put your unique phrase here');
+define('NONCE_KEY',        'put your unique phrase here');
+define('AUTH_SALT',        'put your unique phrase here');
+define('SECURE_AUTH_SALT', 'put your unique phrase here');
+define('LOGGED_IN_SALT',   'put your unique phrase here');
+define('NONCE_SALT',       'put your unique phrase here');
+
+/**#@-*/
+```
+
+
+### Creating the Dockerfile
+
+```dockerfile
+# Docker file for the centos7-wordpress-shared image
+
+FROM centos:7
+MAINTAINER mpolinowski@gmail.com
+
+# Install our Apache and PHP
+RUN yum -y install httpd elinks php php-mysql
+
+# Get & Unzip Wordpress files
+ADD latest.tar.gz /var/www
+
+# Remove the Apache default page      
+RUN ["rm", "-rf", "/var/www/html"]
+
+# Replace it with Wordpress
+RUN ["cp", "-r", "/var/www/wordpress","/var/www/html"]
+
+# Replace the Wordpress default Congfig
+ADD wp-config.php /var/www/html
+
+# Remove the Wordpress Sample Config
+RUN ["rm", "/var/www/html/wp-config-sample.php"]
+
+# Expose the Web Port
+EXPOSE 80
+
+# Run Apache when container starts
+ENTRYPOINT ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+```
+
+We can test the Dockerfile by building the image locally:
+
+
+```bash
+docker build -t centos7-wordpress-shared .
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_40.png)
+
+---
+
+
+Now we can test the image with
+
+
+```bash
+docker run -tid --name=test1-wordpress centos7-wordpress-shared
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_41.png)
+
+---
+
+
+We can test that Apache and Wordpress are running and connected to our MySQL database by connecting to it:
+
+
+```bash
+docker exec -ti test1-wordpress /bin/bash
+ps -ef
+cd /var/www/html
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_42.png)
+
+---
+
+
+Apache was started and all the Wordpress files have been copied over - you can also check if the default config file was replaced with `cat wp-config.php`. And to see if Wordpress Web frontend is running, we need to check the Container IP `docker inspect test1-wordpress` and use __elinks__ to access it on port 80:
+
+
+```bash
+elinks http://172.17.0.3
+```
+
+
+You should see the following welcome screen if the MySQL connection was found:
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_43.png)
+
+---

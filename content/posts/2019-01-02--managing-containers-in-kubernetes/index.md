@@ -343,7 +343,7 @@ The second command will only show you information related to the IP configuratio
 
 A Docker File is a recipe for an Docker image. So far we only pulled predefined images from the DockerHub - writing our own Dockerfile allows us to make changes to those images. Lets start by creating a folder in your home directory named __RunAsUser__ and add a Dockerfile `nano Dockerfile` with the following content:
 
-```yaml
+```dockerfile
 # Dockerfile based on the latest CentOS 7 image - non-privileged user entry
 
 FROM centos:latest
@@ -421,7 +421,7 @@ We can now run `docker ps` to find out the assigned container name (__lucid_lich
 But you cannot reach the page over `elinks http://localhost` because the internal port 80 was not exposed to be reachable from outside the Docker network. Let's stop the container `docker stop lucid_lichterman` and run it again - but this time we are going to forward the internal port 80 to the external port 8081:
 
 
-```
+```bash
 docker run -d -p 8081:80 nginx:latest
 ```
 
