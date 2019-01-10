@@ -62,7 +62,8 @@ Technologies used:
 - [Multiple Container Application Deployment](#multiple-container-application-deployment)
     - [Database Installation](#database-installation)
     - [Wordpress Configuration](#wordpress-configuration)
-    - [Creating the Dockerfile](#creating-the-dockerfile)
+    - [Creating the Docker Container](#creating-the-docker-container)
+    - [Kubernetes Service Configuration](#kubernetes-service-configuration)
 
 <!-- /TOC -->
 
@@ -1064,17 +1065,6 @@ Let's first run the MySQL Container on the Minion Server:
 docker run --detach --name=test1-mysql --env="MYSQL_ROOT_PASSWORD=12345678" mysql --default-authentication-plugin=mysql_native_password
 ```
 
-
-If we want to allow access to our database from another server, we also need to configure FirewallD:
-
-
-```bash
-firewall-cmd --zone=public --add-service=mysql --permanent
-firewall-cmd --reload
-firewall-cmd --list-services
-```
-
-
 To connect to your database, you first have tp find out the IP address of the mysql container with `docker inspect <name of the container>` (the name can be found with `docker ps`). Then use the mysql client (`yum install -y mysql`) to connect (the password is the root password we set when we ran the container):
 
 
@@ -1168,7 +1158,7 @@ define('NONCE_SALT',       'put your unique phrase here');
 ```
 
 
-### Creating the Dockerfile
+### Creating the Docker Container
 
 ```dockerfile
 # Docker file for the centos7-wordpress-shared image
@@ -1264,3 +1254,220 @@ You should see the following welcome screen if the MySQL connection was found:
 ![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_43.png)
 
 ---
+
+
+We can now push the _centos7-wordpress-shared_ image into the Docker Hub:
+
+```bash
+cd /root/docker/builds/centos7-wordpress-shared
+docker build -t mpolinowski/centos7-wordpress-shared .
+docker push mpolinowski/centos7-wordpress-shared
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_45.png)
+
+---
+
+
+### Kubernetes Service Configuration
+
+Let's now create a service for Kubernetes on the __Master Server__:
+
+```bash
+nano service-centos7-wordpress-shared.yaml /root/docker/services
+```
+
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata: 
+  name: service-centos-wordpress
+spec: 
+  ports: 
+    - 
+      nodePort: 32400
+      port: 8000
+      protocol: TCP
+      targetPort: 80
+  selector: 
+    app: centos7-wordpress
+  type: NodePort
+```
+
+
+```bash
+kubectl create -f ./service-centos7-wordpress-shared.yaml
+kubectl get services
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_44.png)
+
+---
+
+
+
+```bash
+nano centos7-wordpress-shared.yaml /root/docker/services
+```
+
+
+```yaml
+apiVersion: v1
+kind: ReplicationController
+metadata: 
+  name: centos7-wordpress-shared
+spec: 
+  replicas: 2
+  selector: 
+    app: centos7-wordpress
+  template: 
+    metadata: 
+      name: centos7-wordpress
+      labels: 
+        app: centos7-wordpress
+    spec: 
+      containers: 
+        - 
+          name: centos7-wordpress-shared1
+          image: mpolinowski/centos7-wordpress-shared
+          ports: 
+            - 
+              containerPort: 80
+```
+
+
+```bash
+kubectl create -f centos7-wordpress-shared.yaml
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_46.png)
+
+---
+
+
+We can verify that the services for _centos7-wordpress-shared_ are running by typing on the __Master Server__:
+
+
+```bash
+kubectl describe replicationcontroller
+kubectl get pods
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_47.png)
+
+---
+
+
+The corresponding containers should be listed on our __Minion Server__:
+
+```bash
+docker ps
+```
+
+
+---
+
+![Red Hat Certified Specialist in Containerized Application Development](./Containerized_Application_Development_48.png)
+
+---
+
+
+Instead of running the MySQL Container on the Minion Server we now want to do make our master into the database server for our cluster. Run the following command - note that this time we need to expose the port __3306__ to have access to it over the regular network:
+
+
+```bash
+docker run --detach --name=mysql-wordpress --env="MYSQL_ROOT_PASSWORD=12345678" -p 3306:3306 mysql --default-authentication-plugin=mysql_native_password
+```
+
+
+We want to allow access to our database from another server, so we also need to configure FirewallD:
+
+
+```bash
+firewall-cmd --zone=public --add-service=mysql --permanent
+firewall-cmd --reload
+firewall-cmd --list-services
+```
+
+
+To connect to your database, you first have tp find out the IP address of the mysql container with `docker inspect mysql-wordpress`. Then use the mysql client (`yum install -y mysql`) to connect (the password is the root password we set when we ran the container):
+
+
+```sql
+mysql -h 172.17.0.2 -p
+create database wordpress;
+show databases;
+```
+
+
+We now need to create a user for the Wordpress application and exit the container:
+
+
+```sql
+CREATE USER 'wordpress'@'%' IDENTIFIED BY 'newpassword';
+GRANT ALL PRIVILEGES ON wordpress.* TO 'wordpress'@'%';
+```
+
+Exit the MySQL container and login again using the _wordpress_ user with the password _newpassword_:
+
+```bash
+mysql -h 127.0.0.1 -u wordpress -p
+```
+
+To test if the Database can be accessed from our node server, switch to the __Minion__ and try:
+
+
+```bash
+mysql -h in-centos-master -u wordpress -p
+show databases;
+```
+
+You should be able to see the `wordpress` database.
+
+
+<!-- We can now rebuild our wordpress image to connect to the MySQL Database on our Master Server. First enter the source folder on the __Minion__ server and edit the _wp-config.php_:
+
+
+```bash
+cd /root/docker/builds/centos7-wordpress-shared
+nano wp-config.php
+```
+
+Go to __DB_HOST__ and replace the container IP address with the hostname we assigned to our master server in the beginning `instar.centos.master` (note: I changed the hostname on my system to `in-centos-master` and  `in-centos-minion1` - but there is no need to do that):
+
+
+```php
+/** MySQL hostname */
+define('DB_HOST', 'in-centos-master');
+```
+
+Now we can rebuild the container image and push the updated _centos7-wordpress-shared_ image into the Docker Hub:
+
+```bash
+cd /root/docker/builds/centos7-wordpress-shared
+docker build -t mpolinowski/centos7-wordpress-shared .
+docker push mpolinowski/centos7-wordpress-shared
+```
+
+
+
+
+
+Then add a Wordpress container and link it with the flag `--link test1-mysql:mysql`:
+
+```
+docker run --detach --name=test1-wordpress --link test1-mysql:mysql -e="WORDPRESS_DB_PASSWORD=12345678" -e="WORDPRESS_DB_USER=root" wordpress
+``` -->
