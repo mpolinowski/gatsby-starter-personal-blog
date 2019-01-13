@@ -2,7 +2,7 @@
 title: Red Hat Certified Specialist in Containerized Application Development
 subTitle: An IT professional who is a Red Hat Certified Specialist in Containerized Application Development has demonstrated the skills, knowledge, and abilities needed to create, update container images and run and link containers. 
 category: "LINUX"
-date: 2018-10-27
+date: 2018-12-27
 cover: photo-11629527996_e8a3d50fde_o-cover.png
 hero: photo-11629527996_e8a3d50fde_o.jpg
 
