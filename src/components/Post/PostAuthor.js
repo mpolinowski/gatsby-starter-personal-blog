@@ -1,10 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import injectSheet from "react-jss";
-import Avatar from "material-ui/Avatar";
+import Avatar from "@material-ui/core/Avatar";
 
 import config from "../../../content/meta/config";
-import avatar from "../../images/avatar/avatar.svg";
+import avatar from "../../images/jpg/avatar.jpg";
 
 const styles = theme => ({
   author: {
@@ -15,7 +15,6 @@ const styles = theme => ({
     flexDirection: "column",
     alignItems: "center",
     "& a": {
-      borderBottom: `1px solid ${theme.base.colors.link}`,
       color: theme.base.colors.link
     },
     [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
@@ -25,6 +24,7 @@ const styles = theme => ({
   },
   avatar: {
     margin: "0 1em 1em",
+    borderRadius: "75% 65%",
     width: "60px",
     height: "60px",
     border: "1px solid #ddd",

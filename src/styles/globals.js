@@ -18,7 +18,7 @@ export default {
      * `article` contexts in Chrome, Firefox, and Safari.
      */
     h1: {
-      fontSize: "1em",
+      fontSize: "2em",
       margin: [["0.67em", 0]]
     },
 
@@ -38,7 +38,7 @@ export default {
      */
     pre: {
       fontFamily: "monospace, monospace" /* 1 */,
-      fontSize: "0.75em" /* 2 */
+      fontSize: "1em" /* 2 */
     },
 
     /**
@@ -77,7 +77,7 @@ export default {
      */
     "code, kbp, samp": {
       fontFamily: "monospace, monospace" /* 1 */,
-      fontSize: "0.9em" /* 2 */
+      fontSize: "1em" /* 2 */
     },
 
     /**
@@ -99,7 +99,7 @@ export default {
      * Add the correct font size in all browsers.
      */
     small: {
-      fontSize: "65%"
+      fontSize: "80%"
     },
 
     /**
@@ -107,7 +107,7 @@ export default {
      * all browsers.
      */
     "sub, sup": {
-      fontSize: "65%",
+      fontSize: "75%",
       lineHeight: 0,
       position: "relative",
       verticalAlign: "baseline"
@@ -323,13 +323,12 @@ export default {
 
     html: {
       boxSizing: "border-box",
-      "-webkit-text-size-adjust": "75%",
+      "-webkit-text-size-adjust": "100%",
       "-moz-text-size-adjust": "none",
-      "-ms-text-size-adjust": "75%",
-      fontFamily: theme.base.fonts.unstyledFamily,
-      background: theme.base.background,
+      "-ms-text-size-adjust": "100%",
+      fontFamily: theme.base.fonts.styledFamily,
       lineHeight: "1.15",
-      textSizeAdjust: "75%"
+      textSizeAdjust: "100%"
     },
     "html.wf-active": {
       fontFamily: theme.base.fonts.styledFamily
@@ -352,7 +351,7 @@ export default {
     },
     body: {
       margin: 0,
-      backgroundColor: "#36393e",
+      background: theme.base.colors.background,
       //overflow: "hidden",
       "-webkit-tap-highlight-color": "rgba(0,0,0,.05)"
     },
@@ -361,19 +360,24 @@ export default {
       position: "relative"
     },
     "h1, h2, h3": {
-      fontWeight: 200
+      fontWeight: 300
     },
     a: {
       background: "transparent",
       textDecorationSkip: "objects",
       fontWeight: "bold",
-      display: "inline-block",
-      lineHeight: "1.1",
       textDecoration: "none",
       transition: "0.3s"
     },
     "input:-webkit-autofill": {
       "-webkit-box-shadow": "0 0 0 50px white inset"
+    },
+    ":not(pre) > code[class*='language-']": {
+      background: "#eee",
+      color: "#666",
+      textShadow: "none",
+      padding: "1px 5px",
+      borderRadius: "2px"
     }
   }
 };

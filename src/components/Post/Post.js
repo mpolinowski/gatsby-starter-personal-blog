@@ -13,6 +13,7 @@ const Post = props => {
   const subTitle = ((post || {}).frontmatter || {}).subTitle;
   const date = ((post || {}).fields || {}).prefix;
   const html = (post || {}).html;
+  const htmlAst = (post || {}).htmlAst;
 
   return (
     <Article>

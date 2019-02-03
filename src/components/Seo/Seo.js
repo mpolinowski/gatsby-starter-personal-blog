@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet";
 import config from "../../../content/meta/config";
 
 const Seo = props => {
@@ -12,7 +12,7 @@ const Seo = props => {
 
   const title = postTitle ? `${postTitle} - ${config.shortSiteTitle}` : config.siteTitle;
   const description = postDescription ? postDescription : config.siteDescription;
-  const image = postCover ? postCover : config.siteImage;
+  const image = postCover ? postCover.childImageSharp.resize.src : config.siteImage;
   const url = config.siteUrl + config.pathPrefix + postSlug;
 
   return (
@@ -33,12 +33,16 @@ const Seo = props => {
       <meta property="og:type" content="website" />
       {/* Twitter Card tags */}
       <meta name="twitter:card" content="summary" />
+      <meta
+        name="twitter:creator"
+        content={config.authorTwitterAccount ? config.authorTwitterAccount : ""}
+      />
     </Helmet>
   );
 };
 
 Seo.propTypes = {
-  data: PropTypes.object,
+  data: PropTypes.object
 };
 
 export default Seo;

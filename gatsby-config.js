@@ -32,10 +32,15 @@ module.exports = {
   siteMetadata: {
     title: config.siteTitle,
     description: config.siteDescription,
-    siteUrl: config.siteUrl,
-    pathPrefix: config.pathPrefix,
+    siteUrl: config.siteUrl
   },
   plugins: [
+    {
+      resolve: `gatsby-plugin-layout`,
+      options: {
+        component: require.resolve(`./src/layouts/`)
+      }
+    },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
@@ -173,15 +178,15 @@ module.exports = {
                 allMarkdownRemark(
                   limit: 1000,
                   sort: { order: DESC, fields: [fields___prefix] },
-                  filter: { id: { regex: "//posts//" } }
+                  filter: { fileAbsolutePath: { regex: "//posts//" } }
                 ) {
                   edges {
                     node {
                       excerpt
                       html
-                      fields { 
+                      fields {
                         slug
-                        prefix 
+                        prefix
                       }
                       frontmatter {
                         title
@@ -200,9 +205,9 @@ module.exports = {
       resolve: `gatsby-plugin-sitemap`
     },
     {
-      resolve: "gatsby-plugin-svgr",
+      resolve: "gatsby-plugin-react-svg",
       options: {
-        dir: `svg-icons`
+        include: /svg-icons/
       }
     }
   ]

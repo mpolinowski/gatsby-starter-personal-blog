@@ -1,37 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 import injectSheet from "react-jss";
-import { MenuItem, MenuList } from "material-ui/Menu";
-import IconButton from "material-ui/IconButton";
-import { Manager, Target, Popper } from "react-popper";
-import ClickAwayListener from "material-ui/utils/ClickAwayListener";
-import Grow from "material-ui/transitions/Grow";
-import Paper from "material-ui/Paper";
-import classNames from "classnames";
-import FilterListIcon from "material-ui-icons/FilterList";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import IconButton from "@material-ui/core/IconButton";
+import FilterListIcon from "@material-ui/icons/FilterList";
 
 const styles = theme => ({
   fontSizeSetter: {
     [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {}
   },
-  button: {
-    color: "white",
-  },
-  buttonRoot: {
-    "&:hover": {
-      background: "rgba(0, 0, 0, 0.04)"
-    }
-  },
-  buttonLabel: {
-    textTransform: "none",
-    fontSize: "1.4em",
-    color: "#777"
-  },
-  popperClose: {
-    pointerEvents: "none"
-  },
-  popper: {
-    zIndex: 1
+  open: {
+    color: theme.bars.colors.icon
   }
 });
 
@@ -45,8 +25,8 @@ class CategoryFilter extends React.Component {
     clearTimeout(this.timeout);
   }
 
-  handleClick = () => {
-    this.setState({ open: !this.state.open });
+  handleClick = event => {
+    this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
   };
 
   handleClose = () => {
@@ -55,7 +35,7 @@ class CategoryFilter extends React.Component {
     }
 
     this.timeout = setTimeout(() => {
-      this.setState({ open: false });
+      this.setState({ open: false, anchorEl: null });
     });
   };
 
@@ -71,42 +51,32 @@ class CategoryFilter extends React.Component {
 
     return (
       <nav className={classes.fontSizeSetter}>
-        <Manager>
-          <Target>
-            <IconButton
-              aria-label="Filter by category"
-              aria-owns={anchorEl ? "long-menu" : null}
-              aria-haspopup="true"
-              onClick={this.handleClick}
-              title="Filter the list by category"
-              className={classes.button}
-            >
-              <FilterListIcon />
-            </IconButton>
-          </Target>
-          <Popper
-            placement="bottom-end"
-            eventsEnabled={open}
-            className={`${classNames({ [classes.popperClose]: !open })} ${classes.popper}`}
+        <div>
+          <IconButton
+            aria-label="Filter by category"
+            aria-owns={anchorEl ? 'cat-menu-list' : undefined}
+            aria-haspopup="true"
+            onClick={this.handleClick}
+            title="Filter the list by category"
+            className={classes.open}
+            role="menu"
           >
-            <ClickAwayListener onClickAway={this.handleClose}>
-              <Grow in={open} id="cat-menu-list" style={{ transformOrigin: "0 0 0" }}>
-                <Paper>
-                  <MenuList role="menu">
-                    <MenuItem key="all" onClick={this.handleFiltering}>
-                      all posts
-                    </MenuItem>
-                    {categories.map(category => (
-                      <MenuItem key={category} onClick={this.handleFiltering}>
-                        {category}
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </Paper>
-              </Grow>
-            </ClickAwayListener>
-          </Popper>
-        </Manager>
+            <FilterListIcon />
+          </IconButton>
+          <Menu
+            id="cat-menu-list"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={this.handleClose}
+          >
+            <MenuItem key="all" onClick={this.handleFiltering}>all posts</MenuItem>
+            {categories.map(category => (
+              <MenuItem key={category} onClick={this.handleFiltering}>
+                {category}
+              </MenuItem>
+            ))}
+          </Menu>
+        </div>
       </nav>
     );
   }

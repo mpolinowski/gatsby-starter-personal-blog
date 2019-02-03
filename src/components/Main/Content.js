@@ -11,7 +11,6 @@ const styles = theme => ({
     fontSize: props => `calc(${theme.main.fonts.content.size}em * ${props.fontSizeIncrease})`,
     lineHeight: theme.main.fonts.content.lineHeight,
     "& a": {
-      borderBottom: `none`,
       color: theme.base.colors.link
     },
     "& .gatsby-highlight": {
@@ -113,4 +112,7 @@ const mapDispatchToProps = {
   setFontSizeIncrease
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(injectSheet(styles)(Content));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(injectSheet(styles)(Content));

@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import injectSheet from "react-jss";
 require("core-js/fn/array/find");
 
-import asyncComponent from "../common/AsyncComponent/";
 import PostAuthor from "./PostAuthor";
+import PostShare from "./PostShare";
 
 const styles = theme => ({
   footer: {
@@ -20,6 +20,7 @@ const styles = theme => ({
 const PostFooter = ({ classes, author, post, slug }) => {
   return (
     <footer className={classes.footer}>
+      <PostShare post={post} slug={slug} />
       <PostAuthor author={author} />
     </footer>
   );

@@ -1,15 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
 import injectSheet from "react-jss";
-import IconButton from "material-ui/IconButton";
+import IconButton from "@material-ui/core/IconButton";
 
-import Link from "gatsby-link";
 import { connect } from "react-redux";
+import screenfull from "screenfull";
 
-import HomeIcon from "material-ui-icons/Home";
-import ArrowUpwardIcon from "material-ui-icons/ArrowUpward";
-import FullscreenIcon from "material-ui-icons/Fullscreen";
-import FullscreenExitIcon from "material-ui-icons/FullscreenExit";
+import HomeIcon from "@material-ui/icons/Home";
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import FullscreenIcon from "@material-ui/icons/Fullscreen";
+import FullscreenExitIcon from "@material-ui/icons/FullscreenExit";
 
 import {
   setNavigatorPosition,
@@ -27,7 +27,6 @@ const styles = theme => ({
     position: "absolute",
     background: theme.bars.colors.background,
     left: 0,
-    //top: `calc(100vh - ${theme.bars.sizes.actionsBar}px)`,
     bottom: 0,
     display: "flex",
     flexDirection: "row",
@@ -74,14 +73,9 @@ const styles = theme => ({
       flexDirection: "column"
     }
   },
-  tooltip: {
-    fontSize: ".9em",
-    padding: ".3em .6em",
-    whiteSpace: "nowrap"
-  },
   button: {
-    color: "white",
-  },
+    color: theme.bars.colors.icon
+  }
 });
 
 class ActionsBar extends React.Component {
@@ -89,8 +83,24 @@ class ActionsBar extends React.Component {
     fullscreen: false
   };
 
+  componentDidMount() {
+    if (screenfull.enabled) {
+      screenfull.on("change", () => {
+        this.setState({
+          fullscreen: screenfull.isFullscreen
+        });
+      });
+    }
+  }
+
   homeOnClick = featureNavigator.bind(this);
   searchOnClick = moveNavigatorAside.bind(this);
+
+  fullscreenOnClick = () => {
+    if (screenfull.enabled) {
+      screenfull.toggle();
+    }
+  };
 
   arrowUpOnClick = () => {
     this.props.setScrollToTop(true);
@@ -128,13 +138,18 @@ class ActionsBar extends React.Component {
         </div>
         <div className={classes.group}>
           {navigatorPosition === "is-aside" && <FontSetter increaseFont={this.fontSetterOnClick} />}
-          <IconButton
-            aria-label="Back to top"
-            onClick={this.arrowUpOnClick}
-            title="Scroll to top"
-            className={classes.button}
-          >
-            <ArrowUpwardIcon />
+          {screenfull.enabled && (
+            <IconButton
+              aria-label="Fullscreen"
+              onClick={this.fullscreenOnClick}
+              title="Fullscreen mode"
+              className={classes.button}
+            >
+              {this.state.fullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+            </IconButton>
+          )}
+          <IconButton aria-label="Back to top" onClick={this.arrowUpOnClick} title="Scroll to top">
+            <ArrowUpwardIcon className={classes.button} />
           </IconButton>
         </div>
       </div>
@@ -171,4 +186,7 @@ const mapDispatchToProps = {
   setCategoryFilter
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(injectSheet(styles)(ActionsBar));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(injectSheet(styles)(ActionsBar));

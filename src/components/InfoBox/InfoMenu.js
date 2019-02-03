@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import injectSheet from "react-jss";
-import Link from "gatsby-link";
+import { Link } from "gatsby";
 
 const styles = theme => ({
   infoMenu: {
@@ -15,7 +15,7 @@ const styles = theme => ({
   link: {
     padding: ".5em",
     fontWeight: 300,
-    fontTransform: "lowercase",
+    textTransform: "lowercase",
     color: theme.info.colors.menuLink,
     "&:hover": {
       color: theme.info.colors.menuLinkHover

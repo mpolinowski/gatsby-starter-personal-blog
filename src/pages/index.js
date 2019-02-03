@@ -45,4 +45,7 @@ const mapDispatchToProps = {
   setNavigatorShape
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Index);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Index);

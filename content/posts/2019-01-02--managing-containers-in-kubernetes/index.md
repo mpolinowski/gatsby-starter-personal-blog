@@ -3,12 +3,12 @@ title: Managing Containers in Kubernetes
 subTitle: An IT professional who is a Red Hat Certified Specialist in Containerized Application Development has demonstrated the skills, knowledge, and abilities needed to create, update container images and run and link containers. 
 category: "LINUX"
 date: 2019-01-02
-cover: photo-11629527996_e8a3d50fde_o-cover.png
-hero: photo-11629527996_e8a3d50fde_o.jpg
+cover: 11627184673_98a1904863_o-cover.png
+hero: 11627184673_98a1904863_o.jpg
 
 ---
 
-![Shanghai, China](./photo-11629527996_e8a3d50fde_o.jpg)
+![Shanghai, China](./11627184673_98a1904863_o.jpg)
 
 Kubernetes, the open-source system for deploying, managing, and scaling containerized apps, is at the heart of Google Kubernetes Engine. This integration is totally natural. Google developed Kubernetes in-house, and uses it to run its own most popular, global apps. Gmail, YouTube, and even Search run in Kubernetes Engine.
 
@@ -62,6 +62,12 @@ To install __ntp__ run `yum install ntp -y`. Run `systemctl enable ntpd && syste
 ![Managing Containers in Kubernetes](./Kubernetes_01.png)
 
 ---
+
+
+The NTP daemon (ntpd) should be considered for systems which are normally kept permanently on. Systems which are required to use broadcast or multicast IP, or to perform authentication of packets with the Autokey protocol, should consider using ntpd.
+
+Chrony would be considered a best match for the systems which are frequently suspended or otherwise intermittently disconnected from a network (mobile and virtual servers etc).
+
 
 
 ## Setting a Hostname

@@ -1,14 +1,11 @@
-import React from "react";
-import PropTypes from "prop-types";
-import injectSheet from "react-jss";
-import { MenuItem, MenuList } from "material-ui/Menu";
-import MoreVertIcon from "material-ui-icons/MoreVert";
-import IconButton from "material-ui/IconButton";
-import { Manager, Target, Popper } from "react-popper";
-import ClickAwayListener from "material-ui/utils/ClickAwayListener";
-import Grow from "material-ui/transitions/Grow";
-import Paper from "material-ui/Paper";
-import classNames from "classnames";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Link } from "gatsby";
+import injectSheet from 'react-jss';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import IconButton from '@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 const styles = theme => ({
   topMenu: {
@@ -16,21 +13,8 @@ const styles = theme => ({
     margin: "5px 10px 0 0",
     [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {}
   },
-  button: {
-    color: "#dedede"
-  },
-  buttonRoot: {
-    "&:hover": {
-      background: "rgba(0, 0, 0, 0.04)"
-    }
-  },
-  buttonLabel: {
-    textTransform: "none",
-    fontSize: "1.4em",
-    color: "#777"
-  },
-  popperClose: {
-    pointerEvents: "none"
+  open: {
+    color: theme.bars.colors.icon
   }
 });
 
@@ -38,15 +22,15 @@ class TopMenu extends React.Component {
   state = {
     anchorEl: null,
     open: false
-  }
+  };
 
   componentWillUnmount() {
     clearTimeout(this.timeout);
   }
 
-  handleClick = () => {
-    this.setState({ open: !this.state.open });
-  }
+  handleClick = event => {
+    this.setState({ open: !this.state.open, anchorEl: event.currentTarget });
+  };
 
   handleClose = () => {
     if (!this.state.open) {
@@ -54,9 +38,9 @@ class TopMenu extends React.Component {
     }
 
     this.timeout = setTimeout(() => {
-      this.setState({ open: false });
+      this.setState({ open: false, anchorEl: null });
     });
-  }
+  };
 
   render() {
     const { classes, pages } = this.props;
@@ -64,66 +48,59 @@ class TopMenu extends React.Component {
 
     return (
       <nav className={classes.topMenu}>
-        <Manager>
-          <Target>
-            <IconButton
-              aria-label="More"
-              aria-owns={anchorEl ? "long-menu" : null}
-              aria-haspopup="true"
-              onClick={this.handleClick}
-            >
-              <MoreVertIcon className={classes.button} />
-            </IconButton>
-          </Target>
-          <Popper
-            placement="bottom-end"
-            eventsEnabled={open}
-            className={classNames({ [classes.popperClose]: !open })}
+        <div>
+          <IconButton
+            aria-label="More"
+            aria-owns={anchorEl ? "top-menu" : null}
+            aria-haspopup="true"
+            onClick={this.handleClick}
+            className={classes.open}
           >
-            <ClickAwayListener onClickAway={this.handleClose}>
-              <Grow in={open} id="menu-list" style={{ transformOrigin: "0 0 0" }}>
-                <Paper>
-                  <MenuList role="menu">
-                    <MenuItem
-                      onClick={e => {
-                        this.props.homeLinkOnClick(e);
-                        this.handleClose();
-                      }}
-                    >
-                      Home
-                    </MenuItem>
-                    {pages.map((page, i) => {
-                      const { fields, frontmatter } = page.node;
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            id="top-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={this.handleClose}
+            role="menu"
+          >
+            <MenuItem
+              onClick={e => {
+                this.props.homeLinkOnClick(e);
+                this.handleClose();
+              }}
+            >
+              Home
+            </MenuItem>
+            {pages.map((page, i) => {
+              const { fields, frontmatter } = page.node;
 
-                      return (
-                        <a key={fields.slug} href={fields.slug} style={{ display: "block" }}>
-                          <MenuItem
-                            onClick={e => {
-                              this.props.pageLinkOnClick(e);
-                              this.handleClose();
-                            }}
-                          >
-                            {frontmatter.menuTitle ? frontmatter.menuTitle : frontmatter.title}
-                          </MenuItem>
-                        </a>
-                      );
-                    })}
-                    <a href="/contact/" style={{ display: "block" }}>
-                      <MenuItem
-                        onClick={e => {
-                          this.props.pageLinkOnClick(e);
-                          this.handleClose();
-                        }}
-                      >
-                        Contact
-                      </MenuItem>
-                    </a>
-                  </MenuList>
-                </Paper>
-              </Grow>
-            </ClickAwayListener>
-          </Popper>
-        </Manager>
+              return (
+                <Link key={fields.slug} to={fields.slug} style={{ display: "block" }}>
+                  <MenuItem
+                    onClick={e => {
+                      this.props.pageLinkOnClick(e);
+                      this.handleClose();
+                    }}
+                  >
+                    {frontmatter.menuTitle ? frontmatter.menuTitle : frontmatter.title}
+                  </MenuItem>
+                </Link>
+              );
+            })}
+            <Link to="/contact/" style={{ display: "block" }}>
+              <MenuItem
+                onClick={e => {
+                  this.props.pageLinkOnClick(e);
+                  this.handleClose();
+                }}
+              >
+                Contact
+              </MenuItem>
+            </Link>
+          </Menu>
+        </div>
       </nav>
     );
   }

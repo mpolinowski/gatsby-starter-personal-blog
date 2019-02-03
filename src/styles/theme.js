@@ -1,15 +1,14 @@
-import { createMuiTheme } from "material-ui/styles";
+import { createMuiTheme } from "@material-ui/core/styles";
 import Color from "color";
-
-const colors = require("./colors");
+import colors from "./colors";
 
 const theme = createMuiTheme({
   base: {
     colors: {
-      background: colors.bg,
-      text: colors.superLightGray,
-      link: colors.bright,
-      linkHover: Color(colors.white)
+      background: colors.background,
+      text: colors.dark,
+      link: colors.accent,
+      linkHover: Color(colors.accent)
         .lighten(0.1)
         .string(),
       accent: colors.accent,
@@ -19,19 +18,18 @@ const theme = createMuiTheme({
       linesMargin: "20px"
     },
     fonts: {
-      unstyledFamily: `Roboto`,
       styledFamily: "Open Sans",
       styledFonts: "300,400,600"
     }
   },
   info: {
     colors: {
-      text: colors.white,
-      background: colors.dark,
-      socialIcons: colors.superLightGray,
+      text: colors.gray,
+      background: colors.background,
+      socialIcons: colors.lightGray,
       socialIconsHover: colors.accent,
-      menuLink: colors.superLightGray,
-      menuLinkHover: colors.bright
+      menuLink: colors.gray,
+      menuLinkHover: colors.accent
     },
     sizes: {
       width: 320,
@@ -45,10 +43,10 @@ const theme = createMuiTheme({
   },
   navigator: {
     colors: {
-      background: colors.darker,
-      postsListItemLink: colors.superLightGray,
-      postsListItemLinkHover: colors.bright,
-      postsHeader: colors.white
+      background: colors.background,
+      postsListItemLink: colors.gray,
+      postsListItemLinkHover: colors.accent,
+      postsHeader: colors.gray
     },
     sizes: {
       closedHeight: 80,
@@ -60,32 +58,33 @@ const theme = createMuiTheme({
   },
   main: {
     colors: {
-      background: colors.bg,
-      title: colors.accent,
-      subTitle: colors.lightGray,
-      meta: colors.lightGray,
-      content: colors.white,
-      footer: colors.lightGray,
-      contentHeading: colors.lightGray,
-      blockquoteFrame: colors.superLightGray,
-      link: colors.bright,
-      linkHover: colors.white
+      background: colors.background,
+      title: colors.gray,
+      subTitle: colors.gray,
+      meta: colors.gray,
+      content: colors.dark,
+      footer: colors.gray,
+      contentHeading: colors.gray,
+      blockquoteFrame: colors.lightGray,
+      link: colors.accent,
+      linkHover: colors.dark,
+      fbCommentsColorscheme: "light"
     },
     sizes: {
       articleMaxWidth: "50em"
     },
     fonts: {
       title: {
-        size: 1.8,
-        sizeM: 2.2,
-        sizeL: 2.5,
+        size: 1.9,
+        sizeM: 2.5,
+        sizeL: 2.7,
         weight: 600,
         lineHeight: 1.1
       },
       subTitle: {
-        size: 1.4,
-        sizeM: 1.6,
-        sizeL: 1.8,
+        size: 1.5,
+        sizeM: 1.8,
+        sizeL: 1.95,
         weight: 300,
         lineHeight: 1.1
       },
@@ -94,7 +93,7 @@ const theme = createMuiTheme({
         weight: 600
       },
       content: {
-        size: 1.2,
+        size: 1.0,
         sizeM: 1.15,
         sizeL: 1.1,
         lineHeight: 1.6
@@ -113,11 +112,11 @@ const theme = createMuiTheme({
   },
   footer: {
     colors: {
-      text: Color(colors.lightGray)
+      text: Color(colors.gray)
         .lighten(0.5)
         .string(),
-      link: colors.bright,
-      linkHover: Color(colors.white)
+      link: colors.accent,
+      linkHover: Color(colors.accent)
         .lighten(0.2)
         .string()
     },
@@ -130,7 +129,9 @@ const theme = createMuiTheme({
   },
   bars: {
     colors: {
-      background: colors.dark
+      background: colors.background,
+      icon: colors.gray,
+      text: colors.gray
     },
     sizes: {
       actionsBar: 60,
@@ -143,17 +144,16 @@ const theme = createMuiTheme({
   },
   palette: {
     primary: {
-      main: "#709425"
+      main: colors.accent
+    },
+    action: {
+      hover: "rgba(0, 0, 0, 0.01)"
     }
   },
   typography: {
     fontFamily: `Arial, sans-serif`,
-    fontSize: 16
-  },
-  pallete: {
-    action: {
-      hover: "rgba(0, 0, 0, 0.01)"
-    }
+    fontSize: 16,
+    useNextVariants: true
   }
 });
 

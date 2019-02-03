@@ -4,7 +4,9 @@ import injectSheet from "react-jss";
 
 import config from "../../../content/meta/config";
 
-import GithubIcon from "../../images/svg-icons/github.svg";
+import GithubIcon from "!svg-react-loader!../../images/svg-icons/github.svg?name=GithubIcon";
+import FacebookIcon from "!svg-react-loader!../../images/svg-icons/facebook.svg?name=FacebookIcon";
+import TwitterIcon from "!svg-react-loader!../../images/svg-icons/twitter.svg?name=TwitterIcon";
 
 const styles = theme => ({
   social: {
@@ -33,6 +35,8 @@ const Socialcons = props => {
   const { classes } = props;
   const items = config.authorSocialLinks;
   const icons = {
+    twitter: TwitterIcon,
+    facebook: FacebookIcon,
     github: GithubIcon
   };
 

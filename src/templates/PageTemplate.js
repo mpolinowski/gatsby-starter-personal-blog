@@ -1,9 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { graphql } from "gatsby";
 import { connect } from "react-redux";
 
 import { setNavigatorPosition, setNavigatorShape } from "../state/store";
 import { moveNavigatorAside } from "../utils/shared";
+
 import Main from "../components/Main/";
 import Page from "../components/Page/";
 import Footer from "../components/Footer/";
@@ -50,7 +52,10 @@ const mapDispatchToProps = {
   setNavigatorShape
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PageTemplate);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PageTemplate);
 
 //eslint-disable-next-line no-undef
 export const pageQuery = graphql`
@@ -62,7 +67,7 @@ export const pageQuery = graphql`
         title
       }
     }
-    footnote: markdownRemark(id: { regex: "/footnote/" }) {
+    footnote: markdownRemark(fileAbsolutePath: { regex: "/footnote/" }) {
       id
       html
     }

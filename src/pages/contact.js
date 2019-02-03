@@ -7,6 +7,7 @@ import Main from "../components/Main";
 import Article from "../components/Main/Article";
 import PageHeader from "../components/Page/PageHeader";
 import Content from "../components/Main/Content";
+import config from "../../content/meta/config";
 
 const styles = theme => ({});
 
@@ -16,7 +17,7 @@ const Contact = () => {
       <Article>
         <PageHeader title="Contact" />
         <Content>
-          Feel free to contact me by email: <Obfuscate email="mpolinowski@gmail.com" /> or use the
+          Feel free to contact me by email: <Obfuscate email={config.contactEmail} /> or use the
           form below.
         </Content>
       </Article>

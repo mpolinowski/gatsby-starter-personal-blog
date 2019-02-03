@@ -1,10 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import injectSheet from "react-jss";
-import IconButton from "material-ui/IconButton";
+import IconButton from "@material-ui/core/IconButton";
 
-import CloseIcon from "material-ui-icons/Close";
-import ExpandLessIcon from "material-ui-icons/ExpandLess";
+import CloseIcon from "@material-ui/icons/Close";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 
 const styles = theme => ({
   closed: {
@@ -35,10 +35,10 @@ const styles = theme => ({
         fontWeight: 300,
         letterSpacing: ".2em"
       }
-    },
-    expand: {
-      position: "relative"
     }
+  },
+  expand: {
+    color: theme.navigator.colors.postsHeader
   },
   filter: {
     margin: `0 calc(-.5rem + ${theme.base.sizes.linesMargin}) 1em calc(-.5rem + ${
