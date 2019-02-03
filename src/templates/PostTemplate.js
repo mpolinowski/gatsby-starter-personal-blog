@@ -12,7 +12,7 @@ import Footer from "../components/Footer/";
 import Seo from "../components/Seo";
 
 require("core-js/fn/array/find");
-require("prismjs/themes/prism-okaidia.css");
+require("prismjs/themes/prism-coy.css");
 
 class PostTemplate extends React.Component {
   moveNavigatorAside = moveNavigatorAside.bind(this);

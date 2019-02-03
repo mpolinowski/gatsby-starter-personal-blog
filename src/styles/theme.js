@@ -75,16 +75,16 @@ const theme = createMuiTheme({
     },
     fonts: {
       title: {
-        size: 1.9,
-        sizeM: 2.5,
-        sizeL: 2.7,
+        size: 1.6,
+        sizeM: 2.3,
+        sizeL: 2.5,
         weight: 600,
         lineHeight: 1.1
       },
       subTitle: {
-        size: 1.5,
-        sizeM: 1.8,
-        sizeL: 1.95,
+        size: 1.2,
+        sizeM: 1.4,
+        sizeL: 1.5,
         weight: 300,
         lineHeight: 1.1
       },

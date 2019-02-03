@@ -56,7 +56,7 @@ const PostHeader = props => {
   return (
     <header className={classes.header}>
       <h1 className={classes.title}>{title}</h1>
-      <h2 className={classes.subTitle}>{subTitle}</h2>
+      <h3 className={classes.subTitle}>{subTitle}</h3>
       <div className={classes.meta}>{myDate(date)}</div>
     </header>
   );

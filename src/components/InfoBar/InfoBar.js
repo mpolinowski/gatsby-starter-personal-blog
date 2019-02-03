@@ -49,10 +49,10 @@ const styles = theme => ({
     margin: "13px 0 0 30px"
   },
   avatar: {
-    width: "36px",
+    width: "31px",
     borderRadius: "65% 75%",
     border: "1px solid #ddd",
-    height: "36px"
+    height: "31px"
   }
 });
 

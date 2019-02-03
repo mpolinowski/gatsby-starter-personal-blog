@@ -40,7 +40,6 @@ The performance-based Red Hat Certified Engineer exam (EX300) tests to determine
   - [Enabling Bonding on CentOS 7](#enabling-bonding-on-centos-7)
   - [Configure multiple IP addresses for bond0](#configure-multiple-ip-addresses-for-bond0)
 - [Network Interface Teaming](#network-interface-teaming)
-- [Kernel Update Troubleshooting](#kernel-update-troubleshooting)
 
 <!-- /TOC -->
 
@@ -771,30 +770,4 @@ This process can be simplified by using the __nmcli__:
 ```
 nmcli con add type team con-name team0 ifname ifcfg-team0 ip4 192.168.2.110 gw4 192.168.2.1
 nmcli con add type team-slave con-name enp0s3 ifname enp0s3 master team0
-```
-
-## Kernel Update Troubleshooting
-
-How to fix: `At least xMB more space needed on the /boot filesystem`. List all installed kernel packages with:
-
-
-```bash
-yum list kernel
-```
-
-
-The kernel in-use will be underlined and cannot be removed. Now to remove unused kernels, install the yum-utils package and use the package-cleanup util:
-
-
-```bash
-yum install yum-utils
-package-cleanup --oldkernels --count=2
-```
-
-
-To make this permanent, edit `/etc/yum.conf` and change the following line:
-
-
-```bash
-installonly_limit=2
 ```

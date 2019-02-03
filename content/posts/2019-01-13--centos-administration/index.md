@@ -17,6 +17,7 @@ hero: photo-19196703263_69f9f0df5f_o.png
 - [Running FirewallD](#running-firewalld)
 - [Changing the SSH Port](#changing-the-ssh-port)
 - [Changing the Hostname](#changing-the-hostname)
+- [Kernel Update Troubleshooting](#kernel-update-troubleshooting)
 
 <!-- /TOC -->
 
@@ -30,6 +31,7 @@ passwd
 passwd user1
 ```
 
+
 ## Running FirewallD
 
 ```bash
@@ -42,6 +44,7 @@ firewall-cmd --permanent --zone=public --add-port=1880/tcp
 firewall-cmd --reload
 firewall-cmd --list-all
 ```
+
 
 ## Changing the SSH Port
 
@@ -67,10 +70,38 @@ Port 4444
 service sshd restart
 ```
 
+
 ## Changing the Hostname
 
 ```bash
 hostnamectl set-hostname your-new-hostname
 hostnamectl
 systemctl reboot
+```
+
+
+## Kernel Update Troubleshooting
+
+How to fix: `At least xMB more space needed on the /boot filesystem`. List all installed kernel packages with:
+
+
+```bash
+yum list kernel
+```
+
+
+The kernel in-use will be underlined and cannot be removed. Now to remove unused kernels, install the yum-utils package and use the package-cleanup util:
+
+
+```bash
+yum install yum-utils
+package-cleanup --oldkernels --count=2
+```
+
+
+To make this permanent, edit `/etc/yum.conf` and change the following line:
+
+
+```bash
+installonly_limit=2
 ```
