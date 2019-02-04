@@ -1,7 +1,7 @@
 ---
 title: Run your Node.js app from a Docker Container
 subTitle: A container image is a lightweight, stand-alone, executable package of a piece of software that includes everything needed to run it - code, runtime, system tools, system libraries, settings. Available for both Linux and Windows based apps, containerized software will always run the same, regardless of the environment.
-category: "Docker"
+category: "Container"
 date: 2018-01-26
 cover: photo-11626710613_fd6faa15ae_o-cover.png
 hero: photo-11626710613_fd6faa15ae_o.png
@@ -12,12 +12,11 @@ hero: photo-11626710613_fd6faa15ae_o.png
 [Github Repository](https://github.com/mpolinowski/node-express-docker-starter)
 
 
-- [Run your Node.js app from a Docker Container](#run-your-nodejs-app-from-a-docker-container)
-  - [01 Create your Node App](#01-create-your-node-app)
-  - [02 Dockerizing your Node.js application](#02-dockerizing-your-nodejs-application)
-    - [Building your image](#building-your-image)
-    - [Running the Container](#running-the-container)
-    - [Running the Container with Kitematic](#running-the-container-with-kitematic)
+- [01 Create your Node App](#01-create-your-node-app)
+- [02 Dockerizing your Node.js application](#02-dockerizing-your-nodejs-application)
+  - [Building your image](#building-your-image)
+  - [Running the Container](#running-the-container)
+  - [Running the Container with Kitematic](#running-the-container-with-kitematic)
 
 
 ## 01 Create your Node App

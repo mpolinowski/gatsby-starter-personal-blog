@@ -1,7 +1,7 @@
 ---
 title: Managing Containers in Kubernetes
 subTitle: An IT professional who is a Red Hat Certified Specialist in Containerized Application Development has demonstrated the skills, knowledge, and abilities needed to create, update container images and run and link containers. 
-category: "LINUX"
+category: "Container"
 date: 2019-01-02
 cover: 11627184673_98a1904863_o-cover.png
 hero: 11627184673_98a1904863_o.jpg

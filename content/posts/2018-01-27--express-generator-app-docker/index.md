@@ -1,7 +1,7 @@
 ---
 title: Link your Node Source Code into a Docker Container
 subTitle: Use Docker to run your source code in a runtime that isn't globally installed on your system. We want to test our source code as it would be executed inside a Linux / Node.js@latest environment, while running our development on a Windows 10 machine.
-category: "Docker"
+category: "Container"
 date: 2018-01-27
 cover: photo-15328436920_ac881c4b7f_o-cover.png
 hero: photo-15328436920_ac881c4b7f_o.png

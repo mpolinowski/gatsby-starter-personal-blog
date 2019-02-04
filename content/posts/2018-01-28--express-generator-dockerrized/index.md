@@ -1,7 +1,7 @@
 ---
 title: How to wrap your Source Code into a Docker Container
 subTitle: We now want to create a custom Docker Container containing our Node.js project source code by creating a Dockerfile and building an Docker Image.
-category: "Docker"
+category: "Container"
 date: 2018-01-28
 cover: photo-19196703263_69f9f0df5f_o-cover.png
 hero: photo-19196703263_69f9f0df5f_o.png
