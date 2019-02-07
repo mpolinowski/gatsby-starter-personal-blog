@@ -29,6 +29,11 @@ In this hands-on lab from [Linux Academy](https://linuxacademy.com/cp), we will 
 - [Create and scale a deployment using kubectl](#create-and-scale-a-deployment-using-kubectl)
   - [Kubernetes stuck on ContainerCreating](#kubernetes-stuck-on-containercreating)
   - [Scaling](#scaling)
+- [Pod Deployment](#pod-deployment)
+- [Kubernetes Services](#kubernetes-services)
+- [Updating the Pod](#updating-the-pod)
+- [Kubernetes + Compose = Kompose](#kubernetes--compose--kompose)
+  - [Use Kompose](#use-kompose)
 
 <!-- /TOC -->
 
@@ -57,7 +62,7 @@ Once you have completed the lab, leave your cluster in its final state. Do not d
 sudo su
 ```
 
-2. This next step is not recommended in production (_How do you create a SE Linux policy?_) - but we are going to disable SE Linux on all 3 servers:
+1. This next step is not recommended in production ([How do you create a SE Linux policy?](https://docs.docker.com/engine/security/seccomp/)) - but we are going to disable SE Linux on all 3 servers:
 
 
 ```
@@ -90,8 +95,29 @@ echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
 
 ---
 
+> To turn off swap on centos type `swapoff -a` and check that the swap was removed with `free -h`. Edit the `/etc/fstab` file, search for the swap line and comment the entire line by adding a `#` in front of the line:
 
-5. Add a FirewallD Service
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_02a.png)
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_02b.png)
+
+---
+
+
+> Now delete the remaining swap file - check the location `blkid` and remove it `rm /dev/mapper/centos-swap`:
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_02c.png)
+
+---
+
+
+1. Add a FirewallD Service
 
 Configure FirewallD for Kubernetes to work correctly. First download the k8s-master.xml and k8s-worker.xml files to `cd /etc/firewalld/services` on your master and minion server:
 
@@ -402,5 +428,331 @@ kubectl get pods
 ---
 
 ![Creating a Kubernetes Cluster](./kubernetes_cluster_16.png)
+
+---
+
+
+To get rid of those pods you can scale it back down to 0 replicas:
+
+
+```bash
+kubectl scale deployment nginx --replicas=0
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_17.png)
+
+---
+
+
+If you try to delete the pods by name `kubectl delete pod nginx-5c7588df-lf2pb`, or try to delete all: `kubectl delete pods --all`, Kubernetes will respawn new pods to meet your deployment scale requirement.
+
+
+
+## Pod Deployment
+
+Let's deploy an simple Angular app inside a [Kubernetes Pod](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#pod-v1-core) - we will use the 0 release of [this Docker image](https://hub.docker.com/r/richardchesterwood/k8s-fleetman-webapp-angular/tags) to get started with. To do this we will have to create a Pod Config file for it called `webapp-angular.yaml`:
+
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+spec:
+  containers:
+  - name: webapp
+    image: richardchesterwood/k8s-fleetman-webapp-angular:release0
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_18.png)
+
+---
+
+
+We can now use __kubectl__ to read our configuration file and generate the webapp Pod:
+
+
+```bash
+kubectl apply -f webapp-angular.yaml
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_19.png)
+
+---
+
+
+You can inspect the pod with:
+
+
+```bash
+kubectl describe pod webapp
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_20.png)
+
+---
+
+
+Just like in Docker, we can use __kubectl__ to run commands against our containers - e.g. to access the shell inside your container, contact the webserver (that should be serving our Angular app) and printing out index page:
+
+
+```bash
+kubectl -it exec webapp sh
+/ # wget http://localhost:80
+/ # cat index.html
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_21.png)
+
+---
+
+
+
+## Kubernetes Services
+
+We now have a Pod that is serving our Angular frontend. To be able to access this Pod from _the outside_ we need to add a [Kubernetes service](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#service-v1-core). Let's create a file `webapp-service.yaml`:
+
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  # Unique key of the Service instance
+  name: fleetman-webapp
+spec:
+  ports:
+    # Accept traffic sent to port 80
+    - name: http
+      port: 80
+      targetPort: 80
+      # The nodePort is available from outside of the
+      # cluster when is set to NodePort. It's value has
+      # to be > 30000
+      nodePort: 30080
+  selector:
+    # Define which pods are going to
+    # be represented by this service
+    # The service makes an network
+    # endpoint for our app
+    app: webapp
+  # Setting the Service type to ClusterIP makes the
+  # service only available from inside the cluster
+  # To expose a port use NodePort instead
+  type: NodePort
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_22.png)
+
+---
+
+
+We now have to add the __Selector__ `webapp` in form of a label in `webapp-angular.yaml` to our frontend pod to connect it to our service:
+
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+  labels:
+    app: webapp
+spec:
+  containers:
+  - name: webapp
+    image: richardchesterwood/k8s-fleetman-webapp-angular:release0
+```
+
+
+The service can be added to our cluster by the following commands:
+
+
+```bash
+kubectl apply -f webapp-angular.yaml
+kubectl apply -f webapp-service.yaml
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_23.png)
+
+---
+
+
+By applying our changes, we have updated our pod and created our service.
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_24.png)
+
+---
+
+
+
+## Updating the Pod
+
+
+To Update a Pod in Production with 0 downtime we can use labels. We can define a second pod inside the same file `webapp-angular.yaml`. Right now we are going to use release versions to define our pods. Later we might change this to a __production__ and a __development__ version - both of which can then be run inside the same cluster and be served by different services:
+
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+  labels:
+    app: webapp
+    release: "0"
+spec:
+  containers:
+  - name: webapp
+    image: richardchesterwood/k8s-fleetman-webapp-angular:release0
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-release-0-5
+  labels:
+    app: webapp
+    release: "0-5"
+spec:
+  containers:
+  - name: webapp
+    image: richardchesterwood/k8s-fleetman-webapp-angular:release0-5
+```
+
+
+Make sure to surround release version with quotation marks to convert it into a string - __"0"__. Otherwise you end up with the error message `for: "webapp-angular.yaml": cannot convert int64 to string`
+
+
+Now we have to modify our service `webapp-service.yaml`: to not only check for the app name label, but also for the release version - we want to only connect to the current version 0. Once the version 0.5 is deployed we then can update the service to connect us to the updated Pod instead - allowing us to deploy the update with 0 downtime:
+
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  # Unique key of the Service instance
+  name: fleetman-webapp
+spec:
+  ports:
+    # Accept traffic sent to port 80
+    - name: http
+      port: 80
+      targetPort: 80
+      # The nodePort is available from outside of the
+      # cluster when is set to NodePort. It's value has
+      # to be > 30000
+      nodePort: 30080
+  selector:
+    # Define which pods are going to
+    # be represented by this service
+    # The service makes an network
+    # endpoint for our app
+    app: webapp
+    release: "0"
+  # Setting the Service type to ClusterIP makes the
+  # service only available from inside the cluster
+  # To expose a port use NodePort instead
+  type: NodePort
+```
+
+
+Now update both our Pod and Service - as well add the new Pod with our updated Angular app:
+
+
+```
+kubectl apply -f webapp-angular.yaml
+kubectl apply -f webapp-service.yaml
+kubectl get pods --show-labels
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_25.png)
+
+---
+
+
+Now that both pods are running we can edit our service `webapp-service.yaml` and change the `selector` to `release: "0-5"`. Apply the change with `kubectl apply -f webapp-service.yaml` and verify that the service is now switched to the new release with `kubectl describe service fleetman-webapp`
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_26.png)
+
+---
+
+
+
+
+
+
+## Kubernetes + Compose = Kompose
+
+[Kompose](http://kompose.io) is a conversion tool for Docker Compose to container orchestrators such as Kubernetes (or OpenShift).
+
+* Simplify your development process with Docker Compose and then deploy your containers to a production cluster
+* [Convert](https://kubernetes.io/docs/tasks/configure-pod-container/translate-compose-kubernetes/) your _docker-compose.yaml_ with one simple command `kompose convert`
+* Immediately bring up your cluster with `kompose up`
+* Bring it back down with `kompose down`
+
+
+Kompose is in EPEL CentOS repository. If you don’t have EPEL repository already installed and enabled you can do it by running `yum install epel-release`:
+
+
+```bash
+yum -y install kompose
+```
+
+
+### Use Kompose
+
+In just a few steps, we’ll take you from Docker Compose to Kubernetes. All you need is an existing `docker-compose.yml` file:
+
+
+1. Go to the directory containing your _docker-compose.yml_ file. Run the `kompose up` command to deploy to Kubernetes directly.
+2. Or convert the _docker-compose.yml_ file to files that you can use with `kubectl`, run `kompose convert`:
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_x1.png)
+
+---
+
+
+And then `kubectl create -f <output files>` - e.g. :
+ 
+
+```bash
+kubectl create -f api-service.yaml,elasticsearch-service.yaml,frontend-service.yaml,wiki-service.yaml,api-deployment.yaml,api-claim0-persistentvolumeclaim.yaml,elasticsearch-deployment.yaml,esdata-en-persistentvolumeclaim.yaml,frontend-deployment.yaml,frontend-claim0-persistentvolumeclaim.yaml,wiki-deployment.yaml
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_x2.png)
 
 ---
