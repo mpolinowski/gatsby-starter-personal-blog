@@ -32,6 +32,13 @@ In this hands-on lab from [Linux Academy](https://linuxacademy.com/cp), we will 
 - [Pod Deployment](#pod-deployment)
 - [Kubernetes Services](#kubernetes-services)
 - [Updating the Pod](#updating-the-pod)
+- [Adding a Queue Server](#adding-a-queue-server)
+- [Replication (not recommended)](#replication-not-recommended)
+  - [ReplicaSets](#replicasets)
+- [Deployment (recommended)](#deployment-recommended)
+  - [Rolling Update and Rollback](#rolling-update-and-rollback)
+- [Networking and Service Discovery](#networking-and-service-discovery)
+  - [Creating a Database Pod](#creating-a-database-pod)
 - [Kubernetes + Compose = Kompose](#kubernetes--compose--kompose)
   - [Use Kompose](#use-kompose)
 
@@ -642,7 +649,7 @@ spec:
 ```
 
 
-Make sure to surround release version with quotation marks to convert it into a string - __"0"__. Otherwise you end up with the error message `for: "webapp-angular.yaml": cannot convert int64 to string`
+Make sure to surround release version with quotation marks to convert it into a string - __"0"__. Otherwise you end up with the error message `for: "webapp-angular.yaml": cannot convert int64 to string`.
 
 
 Now we have to modify our service `webapp-service.yaml`: to not only check for the app name label, but also for the release version - we want to only connect to the current version 0. Once the version 0.5 is deployed we then can update the service to connect us to the updated Pod instead - allowing us to deploy the update with 0 downtime:
@@ -695,7 +702,7 @@ kubectl get pods --show-labels
 ---
 
 
-Now that both pods are running we can edit our service `webapp-service.yaml` and change the `selector` to `release: "0-5"`. Apply the change with `kubectl apply -f webapp-service.yaml` and verify that the service is now switched to the new release with `kubectl describe service fleetman-webapp`
+Now that both pods are running we can edit our service `webapp-service.yaml` and change the `selector` to `release: "0-5"`. Apply the change with `kubectl apply -f webapp-service.yaml` and verify that the service is now switched to the new release with `kubectl describe service fleetman-webapp`:
 
 
 ---
@@ -703,6 +710,457 @@ Now that both pods are running we can edit our service `webapp-service.yaml` and
 ![Creating a Kubernetes Cluster](./kubernetes_cluster_26.png)
 
 ---
+
+
+
+## Adding a Queue Server
+
+Our finished WebApp is going to need a message broker to work. We are going to us the [given Docker Image](https://hub.docker.com/r/richardchesterwood/k8s-fleetman-queue/tags) in the __release1__ version to add [Apache ActiveMQ](http://activemq.apache.org) as a queue service for our app. ActiveMQ, or in generall all Message Oriented Middleware (MOM) implementations are designed for the purpose of sending messages between two applications, or two components inside one application.
+
+
+To add this service in a Pod, we need to create a configuration file for it - this can either be a new file called `webapp-queue.yaml`, or we can simply add it to the end of our existing `webapp-angular.yaml` configuration file to keep everything neat and tidy (this also means that we can simplify the filename to `pods.yaml` -> `mv webapp-angular.yaml pods.yaml`):
+
+
+```yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: queue
+  labels:
+    app: queue
+spec:
+  containers:
+  - name: queue
+    image: richardchesterwood/k8s-fleetman-queue:release1
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_27.png)
+
+---
+
+
+Use __kubectl__ to read our configuration file and generate the Queue Pod:
+
+
+```bash
+kubectl apply -f pods.yaml
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_28.png)
+
+---
+
+To be able to access the Pod, we need to add it to our service configuration `webapp-service.yaml` which we can rename to `services.yaml` -> `mv webapp-service.yaml services.yaml`:
+
+
+```yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  # Unique key of the Service instance
+  name: fleetman-queue
+spec:
+  ports:
+    # Accept traffic sent to port 8161 (default login is admin/admin)
+    - name: http
+      port: 8161
+      targetPort: 8161
+      # The nodePort is available from outside of the
+      # cluster when is set to NodePort. It's value has
+      # to be > 30000
+      nodePort: 30010
+  selector:
+    # Define which pods are going to
+    # be represented by this service
+    # The service makes an network
+    # endpoint for our app
+    app: queue
+  # Setting the Service type to ClusterIP makes the
+  # service only available from inside the cluster
+  # To expose a port use NodePort instead
+  type: NodePort
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_29.png)
+
+---
+
+
+We can now apply all changes with:
+
+```bash
+kubectl apply -f .
+kubectl get all
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_30.png)
+
+---
+
+
+You can inspect the pod, in case that something doesn't look right. All events will be logged at the end of the console output:
+
+
+```bash
+kubectl describe pod queue
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_31.png)
+
+---
+
+
+## Replication (not recommended)
+
+
+So far we spawned all our Pods manually using the `kubectl apply` command. This way it is us who is responsible for the complete life-cycle of the pod. That means that you can delete (gracefully shutdown) or force shutdown those Pods with the `kubectl delete` command:
+
+
+```bash
+kubectl delete pod webapp-release-0-5
+kubectl delete pod webapp-release-0-5 --force
+```
+
+
+The Pod will just disappear - check with `kubectl get all` - and not be restarted. The same would happen if your app crashes and that is a situation where we want Kubernetes to recover Pods to keep our App running.
+
+
+### ReplicaSets
+
+The [ReplicaSet](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#replicaset-v1-apps) is basically just a wrapper around our Pod configuration that defines the number of instances of our Pod we want to be running at all times - if one crashes, it will automatically be replaced by a new version of the same pod.
+
+
+Let's re-write our Pod definition to a __ReplicaSet__ - below is the original `pods.yaml` file (the webapp with release0 was removed):
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+  labels:
+    app: webapp
+    release: "0-5"
+spec:
+  containers:
+  - name: webapp
+    image: richardchesterwood/k8s-fleetman-webapp-angular:release0-5
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: queue
+  labels:
+    app: queue
+spec:
+  containers:
+  - name: queue
+    image: richardchesterwood/k8s-fleetman-queue:release1
+```
+
+
+The __ReplicaSet__ just adds a few lines to the top of our Pod configuration:
+
+
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  # Unique key of the ReplicaSet instance
+  name: webapp
+spec:
+  selector:
+    matchLabels:
+      # the ReplicaSet manages all Pods
+      # where the lable = app: webapp
+      app: webapp
+  # only 1 Pod should exist atm - if it
+  # crashes, a new pod will be spawned.
+  replicas: 1
+  # Here starts the Pod Definition from b4
+  template:
+    metadata:
+      # name: webapp / now we ReplicaSet name
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: richardchesterwood/k8s-fleetman-webapp-angular:release0.5
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: queue
+  labels:
+    app: queue
+spec:
+  containers:
+  - name: queue
+    image: richardchesterwood/k8s-fleetman-queue:release1
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_32.png)
+
+---
+
+
+Before applying our new __ReplicaSet__ let's first delete all pods we created earlier `kubectl delete pods --all` and then start the new Pods with `kubectl apply -f pods.yaml`. You can verify that everything worked with `kubectl get all` and `kubectl describe replicaset webapp`:
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_33.png)
+
+---
+
+
+We earlier added a release selector to the `services.yaml` that now needs to be removed as we are no longer using it as a label for our Pod - afterwards run `kubectl apply -f services.yaml`:
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_34.png)
+
+---
+
+
+If you now delete the Pod manually - simulating a crash - a new pod will be automatically spawned by Kubernetes to replace the Pod you just lost:
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_35.png)
+
+---
+
+
+In the case above, your web service would have experienced a few seconds of downtime while waiting for the new pod to spin up. To prevent this issue we can go back to `pods.yaml` and set the number of __replicas__ to __2__. Now if the first pod crashes, the second one will replace it right away:
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_36.png)
+
+---
+
+
+## Deployment (recommended)
+
+
+Unlike [ReplicaSets](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#replicaset-v1-apps) [Deployments](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#deployment-v1-apps) enable __rolling updates__ with 0 downtime as well as __roll-backs__ to older versions of your app!
+
+
+Let's start with deleting our ReplicaSet `kubectl delete replicaset webapp` - this is going to remove both the set and all pods that have been spawned from it:
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_37.png)
+
+---
+
+
+To now change our __ReplicaSet__ into a __Deployment__ we only have to change `type: Deploymet` inside our `pods.yaml`:
+
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # Unique key of the Deployment
+  name: webapp
+spec:
+  selector:
+    matchLabels:
+      # the Deployment manages all Pods
+      # where the lable = app: webapp
+      app: webapp
+  # only 1 Pod should exist atm - if it
+  # crashes, a new pod will be spawned.
+  replicas: 1
+  # Here starts the Pod Definition from b4
+  template:
+    metadata:
+      # name: webapp / now we Deployment name
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: richardchesterwood/k8s-fleetman-webapp-angular:release0
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: queue
+  labels:
+    app: queue
+spec:
+  containers:
+  - name: queue
+    image: richardchesterwood/k8s-fleetman-queue:release1
+```
+
+
+We also changed the version of our app back to `release0` so we can later test out the update procedure. Then apply the cahnges you made with `kubectl apply -f pods.yaml`:
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_38.png)
+
+---
+
+
+As you can see, the __Deployment__ was created and set up a __ReplicaSet__ for us that spawned two __Pods__:
+
+
+* deployment.apps/webapp   2/2
+* replicaset.apps/webapp-5fb4b78949   2
+* pod/webapp-5fb4b78949-77ddd   1/1
+* pod/webapp-5fb4b78949-kf7rr   1/1
+
+
+### Rolling Update and Rollback
+
+Now to update our app back to `release0-5` edit `pods.yaml` and set the image to back to the 0.5 release. Afterwards run `kubectl apply -f pods.yaml`. This will start up a new __ReplicaSet__ with the updated pods, but keep the old set alive until the update is ready - resulting in a 0-downtime, rolling update of our app:
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_39.png)
+
+---
+
+
+As seen above, the new ReplicaSet was successfully deployed - but the old one was __not deleted__. In case that something goes wrong during the update and the new pods never spin up, the old ones will not go down - keeping your app alive. This also allows you to always come back to the old version, if something goes wrong after the update. You can follow the rollout process with the following command:
+
+
+```bash
+kubectl rollout status deployment webapp
+```
+
+
+To roll back to a working version of your app - after a desasterous update - check the __Rollout History__ and run the rollback command to go back to a previous version or specify the revision you need:
+
+
+```
+kubectl rollout history deployment webapp
+kubectl rollout undo deployment webapp --to-revision=1
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_40.png)
+
+---
+
+
+
+
+## Networking and Service Discovery
+
+To be able to connect applications in different pods - e.g. having a backend container accessing a database in a different pod - Kubernetes has it's own __DNS Service__ and we can assign pods to __Namespaces__ to group them together. When we create a pod without specifying a namespace, it will be assigned the `namespace: default`. The command `kubectl get all` shows us all pods that are inside this specific space. We can run `kubectl get namespaces` to see all available spaces that have been assigned by the DNS service:
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_41.png)
+
+---
+
+
+If we want to see Pods running in the __kube-system__ namespace we can use the `kubectl get pods -n kube-system` command.
+
+
+
+### Creating a Database Pod
+
+We now have a Web Application and a message broker in place. Next we want to a add a MySQL database and we do so with the following configuration file `networking-tests.yaml`:
+
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  containers:
+   - name: mysql
+     image: mysql:5
+     env:
+      # Use secret in real life
+      - name: MYSQL_ROOT_PASSWORD
+        value: password
+      - name: MYSQL_DATABASE
+        value: fleetman
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+spec:
+  selector:
+    app: mysql
+  ports:
+  - port: 3306
+  type: ClusterIP
+
+```
+
+
+We can apply this configuration to our cluster with `kubectl apply -f networking-tests.yaml` and verify that it is running with `kubectl get all`:
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_42.png)
+
+---
+
+
+We now want to see if we can connect to the database from our webapp container. To do so we need to execute the shell command inside the container
+
+
+```
+kubectl exec -it webapp-cf477f847-9wqft sh
+```
+
+
+
+
+
+
+
+
+
 
 
 
