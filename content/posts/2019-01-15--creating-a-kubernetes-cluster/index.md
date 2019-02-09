@@ -149,6 +149,12 @@ __On Minion Nodes__
 firewall-cmd --add-service=k8s-worker --zone=public --permanent
 ```
 
+__TODO__: I have to add `firewall-cmd --add-service=dns --zone=public --permanent` ?
+
+<!--
+systemctl stop firewalld && systemctl disable firewalld
+systemctl start firewalld && systemctl enable firewalld
+-->
 
 ### Install Docker CE
 
@@ -311,7 +317,11 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
 
-We will use [Flannel](https://github.com/coreos/flannel) as a simple and easy way to configure a layer 3 network fabric designed for Kubernetes. Flannel runs a small, single binary agent called flanneld on each host, and is responsible for allocating a subnet lease to each host out of a larger, preconfigured address space. Flannel uses either the Kubernetes API or etcd directly to store the network configuration, the allocated subnets, and any auxiliary data (such as the host's public IP). Packets are forwarded using one of several backend mechanisms including VXLAN and various cloud integrations:
+We will use [Flannel](https://github.com/coreos/flannel) as a simple and easy way to configure a layer 3 network fabric designed for Kubernetes. Flannel runs a small, single binary agent called flanneld on each host, and is responsible for allocating a subnet lease to each host out of a larger, preconfigured address space. Flannel uses either the Kubernetes API or etcd directly to store the network configuration, the allocated subnets, and any auxiliary data (such as the host's public IP). Packets are forwarded using one of several backend mechanisms including VXLAN and various cloud integrations.
+
+For flannel to work correctly, you must pass `--pod-network-cidr=10.244.0.0/16` to `kubeadm init`.
+
+Set _/proc/sys/net/bridge/bridge-nf-call-iptables_ to 1 by running `sysctl net.bridge.bridge-nf-call-iptables=1` to pass bridged IPv4 traffic to iptables chains. This is a requirement for some CNI plugins to work, for more information please see here.
 
 
 ```bash
@@ -614,6 +624,9 @@ By applying our changes, we have updated our pod and created our service.
 ---
 
 
+The webapp is now accessible on your Cluster IP with the Port __30080__!
+
+
 
 ## Updating the Pod
 
@@ -710,6 +723,18 @@ Now that both pods are running we can edit our service `webapp-service.yaml` and
 ![Creating a Kubernetes Cluster](./kubernetes_cluster_26.png)
 
 ---
+
+
+Type in the IP of your __Kybernetes Cluster__ (_WAN IP of your master server_) and add the port __30080__ to access the updated web interface with your browser:
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_26a.png)
+
+---
+
+
 
 
 
@@ -825,6 +850,18 @@ kubectl describe pod queue
 ![Creating a Kubernetes Cluster](./kubernetes_cluster_31.png)
 
 ---
+
+
+Type in the IP of your __Kybernetes Cluster__ (_WAN IP of your master server_) and add the port __30010__ to access the updated web interface with your browser:
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_31a.png)
+
+---
+
+
 
 
 ## Replication (not recommended)
@@ -1084,6 +1121,133 @@ kubectl rollout undo deployment webapp --to-revision=1
 
 ## Networking and Service Discovery
 
+We will now create a simple Pod to use as a test environment. Create a file named busybox.yaml with the following contents:
+
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  namespace: default
+spec:
+  containers:
+  - name: busybox
+    image: busybox:1.28
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always
+```
+
+Then create a pod using this file and verify its status:
+
+
+```bash
+kubectl create -f busybox.yaml
+pod/busybox created
+
+kubectl get pods busybox
+NAME      READY     STATUS    RESTARTS   AGE
+busybox   1/1       Running   0          12s
+```
+
+
+Once that pod is running, you can `exec nslookup` in that environment. If you see something like the following, DNS is working correctly:
+
+
+```bash
+kubectl exec -ti busybox -- nslookup kubernetes.default
+Server:    10.96.0.10
+Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+
+Name:      kubernetes.default
+Address 1: 10.96.0.1 kubernetes.default.svc.cluster.local
+```
+
+
+`nslookup` successfully contacted the internal __CoreDNS server__ on `10.96.0.10` that Kubernetes provides and resolved the corresponding IP address for __kubernetes.default__. If the address resolution fails, try to to bring down __FirewallD__ and test which port is being blocked - don't forget to bring it back up afterwards:
+
+
+```bash
+systemctl stop firewalld && systemctl disable firewalld
+systemctl start firewalld && systemctl enable firewalld
+```
+
+
+__What to do if shutting down FirewallD "solves" your Problem?__
+
+There are several threads on Github talking about this issue - [this one](https://github.com/kubernetes/kubeadm/issues/504) solved the issue for me:
+
+* __Problem__: `nslookup` does not resolve any domains when FirewallD is active:
+
+```bash
+[root@in-centos-master ~]# kubectl exec -ti webapp-cf477f847-9wqft sh
+/ # nslookup database
+nslookup: can't resolve '(null)': Name does not resolve
+
+nslookup: can't resolve 'database': Try again
+/ # nslookup google.com
+nslookup: can't resolve '(null)': Name does not resolve
+
+nslookup: can't resolve 'google.com': Try again
+/ # exit
+command terminated with exit code 1
+```
+
+* __Solution__: Configure `iptables` as follows by [copying this](https://github.com/kubernetes/kubeadm/issues/504#issuecomment-404737675) to all nodes in cluster:
+
+```bash
+systemctl stop kubelet
+systemctl stop docker
+rm -rf /var/lib/cni/
+rm -rf /etc/cni/net.d
+rm -rf /run/flannel
+
+iptables -t nat -F
+iptables -t mangle -F
+iptables -F
+iptables -X
+iptables -P INPUT ACCEPT
+iptables -P FORWARD ACCEPT
+iptables -P OUTPUT ACCEPT
+
+
+ip6tables -t nat -F
+ip6tables -t mangle -F
+ip6tables -F
+ip6tables -X
+ip6tables -P INPUT ACCEPT
+ip6tables -P FORWARD ACCEPT
+ip6tables -P OUTPUT ACCEPT
+
+iptables -L -v -n 
+iptables -L -v -n -t nat
+conntrack -L 
+ipset list
+
+lsmod|grep br_netfilter
+modprobe br_netfilter
+systemctl start docker
+systemctl start kubelet
+```
+
+`nslookup` should now work:
+
+```bash
+/ # nslookup database
+nslookup: can't resolve '(null)': Name does not resolve
+
+Name:      database
+Address 1: 10.105.73.87 database.default.svc.cluster.local
+/ # 
+```
+
+
+Or check the [DNS Debugging](https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/) section in the Kubernetes documentation.
+
+
 To be able to connect applications in different pods - e.g. having a backend container accessing a database in a different pod - Kubernetes has it's own __DNS Service__ and we can assign pods to __Namespaces__ to group them together. When we create a pod without specifying a namespace, it will be assigned the `namespace: default`. The command `kubectl get all` shows us all pods that are inside this specific space. We can run `kubectl get namespaces` to see all available spaces that have been assigned by the DNS service:
 
 
@@ -1100,7 +1264,7 @@ If we want to see Pods running in the __kube-system__ namespace we can use the `
 
 ### Creating a Database Pod
 
-We now have a Web Application and a message broker in place. Next we want to a add a MySQL database and we do so with the following configuration file `networking-tests.yaml`:
+We now have a Web Application and a message broker in place. Next we want to a add a MariaDB database and we do so with the following configuration file `networking-tests.yaml`:
 
 
 ```yaml
@@ -1146,24 +1310,87 @@ We can apply this configuration to our cluster with `kubectl apply -f networking
 ---
 
 
-We now want to see if we can connect to the database from our webapp container. To do so we need to execute the shell command inside the container
+We now want to see if we can connect to the database from our webapp container. To do so we need to execute the shell command inside the container and check the DNS configuration file:
 
 
 ```
 kubectl exec -it webapp-cf477f847-9wqft sh
+/ # cat /etc/resolv.conf
 ```
 
 
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_43.png)
+
+---
+
+
+In this case the CoreDNS server is registered under `nameserver 10.96.0.10` - that means that every time we need to resolve a domain name, like we did earlier with `kubernetes.default`, this DNS server is contacted to resolve the underlying IP address for us. We can verify this by typing:
+
+
+```bash
+kubectl get services -n kube-system
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_44.png)
+
+---
 
 
 
+That means that if we want to connect to our database server from another pod in our cluster (__Service Discovery__), all we need to do is to connect to the domain name `database` that is provided by the database service. This is very important since the assigned IP address can change all the time!
 
 
+Going back into the webapp container we can run a `nslookup` to see if the DNS service is working correctly:
 
 
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_45.png)
+
+---
 
 
+As you see, we can not only resolve internal cluster IPs but also internet domains - the CoreDNS service is using `8.8.8.8` and `8.8.4.4` as __Upstream DNS Servers_ [by default](https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/#configure-stub-domain-and-upstream-dns-servers).
 
+
+You can also see that the FQDN (__Fully Qualified Domain Name__) of our database is actually `database.default.svc.cluster.local`. The reason why we can simply use `databse` to get an result, is that the `/etc/resolv.conf` file specifies that if a domain name is not found appened one of the standard strings to it and try again:
+
+
+```bash
+search default.svc.cluster.local svc.cluster.local cluster.local
+```
+
+Just using `database` as domain works fine because the pod is inside the __default namespace__. As soon as you start using different namespaces for different type of services, you __have to use the FQDN__ instead - or at least appened the used namespace to it, e.g. `database.mynondefaultnamespace` (the DNS service will then add `svc.cluster.local` to find the FQDN for you).
+
+
+To check if the webapp container can access the MariaDB database, we can install the __mySQL client__ on the _Alpine image_ that serves our webapp:
+
+
+```bash
+apk update
+apk add mysql-client
+```
+
+To connect to our database we just have to type `mysql` followed by the host address `-h database` and the login credentials we set inside the configuration file earlier:
+
+
+```bash
+mysql -h database -uroot -ppassword fleetman
+MySQL [fleetman]> CREATE TABLE testtable (test varchar (255));
+MySQL [fleetman]> SHOW TABLES;
+```
+
+
+---
+
+![Creating a Kubernetes Cluster](./kubernetes_cluster_46.png)
+
+---
 
 
 
@@ -1196,7 +1423,7 @@ In just a few steps, we’ll take you from Docker Compose to Kubernetes. All you
 
 ---
 
-![Creating a Kubernetes Cluster](./kubernetes_cluster_x1.png)
+![Creating a Kubernetes Cluster](./kubernetes_cluster_47.png)
 
 ---
 
@@ -1211,6 +1438,6 @@ kubectl create -f api-service.yaml,elasticsearch-service.yaml,frontend-service.y
 
 ---
 
-![Creating a Kubernetes Cluster](./kubernetes_cluster_x2.png)
+![Creating a Kubernetes Cluster](./kubernetes_cluster_48.png)
 
 ---

@@ -26,7 +26,7 @@ hero: photo-34364880182_fe2d33582b_o.jpg
 
 
 
-
+<!-- 
 
 
 ## Kubernetes + Compose = Kompose
@@ -62,17 +62,4 @@ In just a few steps, we’ll take you from Docker Compose to Kubernetes. All you
 
 ---
 
-
-And then `kubectl create -f <output files>` - e.g. :
- 
-
-```bash
-kubectl create -f api-service.yaml,elasticsearch-service.yaml,frontend-service.yaml,wiki-service.yaml,api-deployment.yaml,api-claim0-persistentvolumeclaim.yaml,elasticsearch-deployment.yaml,esdata-en-persistentvolumeclaim.yaml,frontend-deployment.yaml,frontend-claim0-persistentvolumeclaim.yaml,wiki-deployment.yaml
-```
-
-
----
-
-![Creating a Kubernetes Cluster](./kubernetes_cluster_x2.png)
-
----
+-->
