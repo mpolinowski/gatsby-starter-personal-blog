@@ -20,6 +20,12 @@ hero: photo-34364880182_fe2d33582b_o.jpg
   - [Deploying the Position Tracker](#deploying-the-position-tracker)
   - [Deploying the API Gateway](#deploying-the-api-gateway)
   - [Deploying the Angular Frontend](#deploying-the-angular-frontend)
+- [Persistence in a Kubernetes Cluster](#persistence-in-a-kubernetes-cluster)
+  - [MongoDB Pod](#mongodb-pod)
+  - [MongoDB Service](#mongodb-service)
+  - [Volume Mounts](#volume-mounts)
+  - [Using PersistentVolumeClaims](#using-persistentvolumeclaims)
+- [Cloud Deployment](#cloud-deployment)
 
 <!-- /TOC -->
 
@@ -550,3 +556,447 @@ And you should be able to access the web interface on port __30080__ on your mas
 ![A Kubernetes Cluster & Microservices](./kubernetes_microservices_12.gif)
 
 ---
+
+
+
+## Persistence in a Kubernetes Cluster
+
+In Docker all data that is generated inside a container is lost when you restart it. So if we, for example, want to store the geo location of our car fleet and calculate a travel path from it, all of that is gone, when the container restarts. Docker offers persistent in external volumes to prevent this from happening.
+
+
+To add __vehicle tracking__ to our app, we need to update all of our images to the `:release2` in `workloads.yaml`:
+
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: queue
+spec:
+  selector:
+    matchLabels:
+      app: queue
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: queue
+    spec:
+      containers:
+      - name: queue
+        image: richardchesterwood/k8s-fleetman-queue:release2
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: position-simulator
+spec:
+  selector:
+    matchLabels:
+      app: position-simulator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: position-simulator
+    spec:
+      containers:
+      - name: position-simulator
+        image: richardchesterwood/k8s-fleetman-position-simulator:release2
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: production-microservice
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: position-tracker
+spec:
+  selector:
+    matchLabels:
+      app: position-tracker
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: position-tracker
+    spec:
+      containers:
+      - name: position-tracker
+        image: richardchesterwood/k8s-fleetman-position-tracker:release2
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: production-microservice
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  selector:
+    matchLabels:
+      app: api-gateway
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+      - name: api-gateway
+        image: richardchesterwood/k8s-fleetman-api-gateway:release2
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: production-microservice
+          
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+spec:
+  selector:
+    matchLabels:
+      app: webapp
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: richardchesterwood/k8s-fleetman-webapp-angular:release2
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: production-microservice
+```
+
+
+Restarting everything with `kubectl apply -f workloads.yaml` now shows us the v2 interface on port __30080__. Clicking on a vehicle name in the list on the left will jump you to the selected truck and highlight the path that vehicle has taken:
+
+
+---
+
+![A Kubernetes Cluster & Microservices](./kubernetes_microservices_13.png)
+
+---
+
+
+This data is stored in an internal data structure inside the __Position Tracker__ container and will be lost if you reload that container. You can get the webapp pod name and delete it:
+
+
+```
+kubectl get all
+kubectl delete pod -f pod/position-tracker-684d9d84cb-st8pc
+```
+
+
+Your deployment will take care of restarting the webapp for you - if you reload the web interface you will see that the tracker data has been lost. To prevent this from happening, we now want to add a __MongoDB__ database to our cluster that stores the data tracker produces in a persistent way.
+
+
+
+### MongoDB Pod
+
+We have a new release of the app `:release3` that is build, expecting there to be a [MongoDB Database](https://hub.docker.com/_/mongo) (_3.6.10-stretch_) on our cluster to store the tracking data in. We can create a new Kubernetes deployment for this Docker images and we are going to configure it in a file called `mongo-stack.yaml`:
+
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:3.6.10-stretch
+```
+
+
+Now update only the __Position Tracker__ image in `workloads.yaml` to v3 (same as before, see above) and apply all changes to the cluster:
+
+
+```
+kubectl apply -f mongo-stack.yaml
+kubectl apply -f workloads.yaml
+kubectl get all
+```
+
+
+
+### MongoDB Service
+
+To enable our tracker to use our new database we need to add a Kubernetes service and expose the MongoDB port to the Cluster. And we can define this services inside the `mongo-stack.yaml` file, right under the pod config:
+
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:3.6.10-stretch
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetman-mongodb
+spec:
+  ports:
+    - name: mongo-default
+      port: 27017
+      targetPort: 27017
+  selector:
+    app: mongodb
+  type: ClusterIP
+```
+
+
+It is critical to add the metadata name `fleetman-mongodb` as this is going to be the domain name that CoreDNS inside our cluster is using to resolve the pod IP address and our v3 __Production Tracker__ is [configured to search](https://github.com/DickChesterwood/k8s-fleetman/blob/release3/k8s-fleetman-position-tracker/src/main/resources/application-production-microservice.properties) for the MongoDB database on `mongodb.host=fleetman-mongodb.default.svc.cluster.local`!
+
+
+Also make sure that the service __Selector__ is set to match the __matchLabels__ in the pod config above, as this is used to connect the service. Now re-apply the Mongo stack configuration to start up the service. If you repeat the experiment from earlier and delete the __Position Tracker__ the collected data will persist. 
+
+
+```
+kubectl apply -f mongo-stack.yaml
+kubectl get all
+kubectl delete pod -f pod/position-tracker-684d9d84cb-st8pc
+```
+
+
+### Volume Mounts
+
+Right now the data is still stored on the filesystem of the MongoDB container. We need to configure the MongoDB container to persist the data outside of the container itself, on our Kubernetes node filesystem in a [Persistent Volume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) to make it survive a complete reload of our cluster.
+
+
+To mount an external volume into the MongoDB container, we need to add a few lines to the pod configuration file. If you scroll to the bottom of the  DockerHub page ([Where to Store Data?](https://hub.docker.com/_/mongo)) you can see that the default data storage path inside the MongoDB container is `/data/db`. We now have to link this path inside the container (`mountPath`) to a volume on our host server (or an EBS volume on AWS). You can find all the options for the receiving volume in the [Kubernetes documentation](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#volume-v1-core). We are going to use a [hostPath](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath) with the type __DirectoryOrCreate__ - meaning that we don't have to go into the host and create the directory first (it will be created if not existing):
+
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:3.6.10-stretch
+        volumeMounts:
+          - name: mongo-persistent-storage
+            mountPath: /data/db
+      volumes:
+        - name: mongo-persistent-storage      
+          hostPath:
+            # directory location on host
+            path: /mnt/kubernetes/mongodb
+            # DirectoryOrCreate, Directory, FileOrCreate, File, etc.
+            type: DirectoryOrCreate
+```
+
+
+Apply those changes to your cluster and use the `describe` command to check if the mount was successful:
+
+
+---
+
+![A Kubernetes Cluster & Microservices](./kubernetes_microservices_14.png)
+
+---
+
+
+From the event log at the bottom we can see that the container was deployed to `in-centos-minion2` (alternatively use `kubectl get pods -o wide` to list the nodes your pods are hosted on) - a quick check confirms that the volume `/mnt/kubernetes/mongodb` was created and MongoDB started to use it:
+
+
+---
+
+![A Kubernetes Cluster & Microservices](./kubernetes_microservices_15.png)
+
+---
+
+
+
+### Using PersistentVolumeClaims
+
+A [persistentVolumeClaim](https://kubernetes.io/docs/concepts/storage/volumes/#persistentvolumeclaim) volume is used to mount a PersistentVolume into a Pod. PersistentVolumes are a way for users to “claim” durable storage (such as a GCE PersistentDisk or an iSCSI volume) without knowing the details of the particular cloud environment. This is just a minor change to our `mongo-stack.yaml` file:
+
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:3.6.10-stretch
+        volumeMounts:
+          - name: mongo-persistent-storage
+            mountPath: /data/db
+      volumes:
+        - name: mongo-persistent-storage
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+```
+
+
+The persistent volume is then configured in a separate configuration file we will call `storage.yaml` - this way, if we have to move our cluster to a new cloud provider we do not have to make any changes to the workload or service file:
+
+
+```yaml
+# What do want?
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  # has to match the name you used as claimName!
+  name: mongo-pvc
+spec:
+  # linking the claim with the implementation below
+  storageClassName: mylocalstorage
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      # Let Kubernetes find a node that offers at least the amount of storage
+      storage: 1Gi
+
+---
+# How do we want it implemented
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-storage
+spec:
+  storageClassName: mylocalstorage
+  capacity:
+    # create a storage claim for this amount - e.g. create a EBS volume on AWS
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    # directory location on host
+    path: "/mnt/kubernetes/mongodb-tracking-data"
+    # DirectoryOrCreate, Directory, FileOrCreate, File, etc.
+    type: DirectoryOrCreate
+```
+
+
+The `PersistentVolumeClaim` and `PersistentVolume` are matched up by the `storageClassName`. The cloud administrator has to create persistent storages based on available hardware (or cloud storage partitions). The web developer then creates a claim for storage with a certain capacity - so Kubernetes can search for a fitting volume among the available.
+
+
+We choose the `storageClassName: mylocalstorage` - in production this would be something more useful. E.g. your pods really need very fast storage - so you can set a claim for a __storageClassName__ that refers to high performance _SSD_ storage.
+
+
+
+
+Noteworthy also is the [Access Mode](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) that can be:
+
+* ReadWriteOnce – the volume can be mounted as read-write by a single node
+* ReadOnlyMany – the volume can be mounted read-only by many nodes
+* ReadWriteMany – the volume can be mounted as read-write by many nodes
+
+
+In the CLI, the access modes are abbreviated to:
+
+* RWO - ReadWriteOnce
+* ROX - ReadOnlyMany
+* RWX - ReadWriteMany
+
+
+Once you done with the configuration, apply it and check if the pv (persistent volume) was created and bound to the MongoDB pod:
+
+
+```bash
+kubectl apply -f storage.yaml
+kubectl apply -f mongo-stack.yaml
+kubectl get pv
+kubectl get pvc
+```
+
+
+---
+
+![A Kubernetes Cluster & Microservices](./kubernetes_microservices_15.png)
+
+---
+
+
+
+## Cloud Deployment
+
+
+
+kubectl expose deployment webapp --type=LoadBalancer --name=exposed-webapp
+
+
+Examples:
+  * Create a service for a replicated nginx, which serves on port 80 and connects to the containers on port 8000.
+  kubectl expose rc nginx --port=80 --target-port=8000
+  
+  * Create a service for a replication controller identified by type and name specified in "nginx-controller.yaml",
+which serves on port 80 and connects to the containers on port 8000.
+  kubectl expose -f nginx-controller.yaml --port=80 --target-port=8000
+  
+  * Create a service for a pod valid-pod, which serves on port 444 with the name "frontend"
+  kubectl expose pod valid-pod --port=444 --name=frontend
+  
+  * Create a second service based on the above service, exposing the container port 8443 as port 443 with the name
+"nginx-https"
+  kubectl expose service nginx --port=443 --target-port=8443 --name=nginx-https
+  
+  * Create a service for a replicated streaming application on port 4100 balancing UDP traffic and named 'video-stream'.
+  kubectl expose rc streamer --port=4100 --protocol=udp --name=video-stream
+  
+  * Create a service for a replicated nginx using replica set, which serves on port 80 and connects to the containers on
+port 8000.
+  kubectl expose rs nginx --port=80 --target-port=8000
+  
+  * Create a service for an nginx deployment, which serves on port 80 and connects to the containers on port 8000.
+  kubectl expose deployment nginx --port=80 --target-port=8000
+
+
+
