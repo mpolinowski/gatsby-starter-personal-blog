@@ -24,7 +24,7 @@ In this hands-on lab from [Linux Academy](https://linuxacademy.com/cp), we will 
   - [Install Kubernetes](#install-kubernetes)
   - [Start Docker and Kublet](#start-docker-and-kublet)
 - [Cluster Initialization](#cluster-initialization)
-  - [Networking details](#networking-details)
+  - [Installing a Pod Network Add-on](#installing-a-pod-network-add-on)
   - [Check the cluster state.](#check-the-cluster-state)
 - [Create and scale a deployment using kubectl](#create-and-scale-a-deployment-using-kubectl)
   - [Kubernetes stuck on ContainerCreating](#kubernetes-stuck-on-containercreating)
@@ -274,12 +274,27 @@ systemctl restart kubelet
 
 So far we did the basic setup for all our servers - now we will initialize our cluster from the __MASTER SERVER__ using the IP range for Flannel. Kubeadm is a tool built to provide [kubeadm init](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/) and [kubeadm join](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-join/) as best-practice _fast paths_ for creating Kubernetes clusters. The __init command__ executes the following phases:
 
-
+<!-- Flannel CNI backup
 ```bash
 kubeadm init --pod-network-cidr=10.244.0.0/16
 ```
+kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=NumCPU
+-->
 
-<!-- kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=NumCPU -->
+
+<!-- Calico CNI backup
+```bash
+kubeadm init --pod-network-cidr=192.168.0.0/16
+```
+
+> The flag `--pod-network-cidr=192.168.0.0/16` has to be passed in for our [Container Network Interface (CNI)](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network) to work - see below. __Note__ that we are going to use the [Calico CNI](https://docs.projectcalico.org/latest/getting-started/kubernetes/) - other CNI's need different parameter.
+-->
+
+
+```bash
+kubeadm init
+```
+
 
 Your Kubernetes master has initialized successfully! You can now join any number of machines by running the following on each node as root:
 
@@ -306,6 +321,9 @@ Copy the `kubeadmin join` command that is in the output and past it into your mi
 ---
 
 
+> To start over and reset the __init__ and __join__ process by running the [kubeadm reset](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-reset/) command on your master and all minion servers + clean up iptables `iptables -F && iptables -t nat -F && iptables -t mangle -F && iptables -X`
+
+
 
 To start using your cluster, you need to run the following as a regular user:
 
@@ -317,6 +335,12 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
 
+
+### Installing a Pod Network Add-on
+
+You must install a pod network add-on so that your pods can communicate with each other. The network must be deployed before any applications. Also, CoreDNS will not start up before a network is installed. kubeadm only supports [Container Network Interface (CNI)](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network) based networks (and does not support kubenet).
+
+<!-- Flannel CNI backup
 We will use [Flannel](https://github.com/coreos/flannel) as a simple and easy way to configure a layer 3 network fabric designed for Kubernetes. Flannel runs a small, single binary agent called flanneld on each host, and is responsible for allocating a subnet lease to each host out of a larger, preconfigured address space. Flannel uses either the Kubernetes API or etcd directly to store the network configuration, the allocated subnets, and any auxiliary data (such as the host's public IP). Packets are forwarded using one of several backend mechanisms including VXLAN and various cloud integrations.
 
 For flannel to work correctly, you must pass `--pod-network-cidr=10.244.0.0/16` to `kubeadm init`.
@@ -327,6 +351,38 @@ Set _/proc/sys/net/bridge/bridge-nf-call-iptables_ to 1 by running `sysctl net.b
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 ```
+-->
+
+
+<!-- Calico CNI backup
+There are several CNI's listed for Kubernetes - but we will be using the solution from [Calico](https://docs.projectcalico.org/latest/getting-started/kubernetes/). For Calico to work correctly, you needed to pass `--pod-network-cidr=192.168.0.0/16` to `kubeadm init` or update the calico.yml file to match your Pod network. Note that Calico works on amd64, arm64 and ppc64le only. We can install the pod network add-on with the following commands on your Master server:
+
+
+```bash
+kubectl apply -f \
+https://docs.projectcalico.org/v3.5/getting-started/kubernetes/installation/hosted/etcd.yaml
+kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+```
+-->
+
+
+There are several CNI's listed for Kubernetes - but we will be using the solution from [Weave Net](https://www.weave.works/docs/net/latest/kube-addon/). First Set __/proc/sys/net/bridge/bridge-nf-call-iptables__ to __1__ by running `sysctl net.bridge.bridge-nf-call-iptables=1` to pass bridged IPv4 traffic to iptables’ chains. This is a requirement for some CNI plugins to work, for more information please see here.
+
+
+```
+sysctl -w net.bridge.bridge-nf-call-iptables=1
+sysctl -w net.bridge.bridge-nf-call-ip6tables=1
+reboot
+```
+
+
+Weave Net works on amd64, arm, arm64 and ppc64le without any extra action required. Weave Net sets hairpin mode by default. This allows Pods to access themselves via their Service IP address if they don’t know their PodIP:
+
+
+```bash
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+```
 
 
 ---
@@ -336,39 +392,20 @@ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documen
 ---
 
 
-### Networking details
-
-Platforms like Kubernetes assume that each container (pod) has a unique, routable IP inside the cluster. The advantage of this model is that it removes the port mapping complexities that come from sharing a single host IP.
-
-Flannel is responsible for providing a layer 3 IPv4 network between multiple nodes in a cluster. Flannel does not control how containers are networked to the host, only how the traffic is transported between hosts. However, flannel does provide a CNI plugin for Kubernetes and a guidance on integrating with Docker.
-
-
 ### Check the cluster state.
 
 
-```bash
-kubectl get pods --all-namespaces
-```
+A quick `kubectl get nodes` should confirm that all our nodes are now connected to the container network (see screenshot above)!
+
+
+Once a pod network has been installed, you can confirm that it is working by checking that the CoreDNS pod is Running in the output of `kubectl get pods --all-namespaces`. And once the CoreDNS pod is up and running, you can continue by joining your nodes.
+
+Platforms like Kubernetes assume that each container (pod) has a unique, routable IP inside the cluster. The advantage of this model is that it removes the port mapping complexities that come from sharing a single host IP.
 
 
 ---
 
 ![Creating a Kubernetes Cluster](./kubernetes_cluster_12.png)
-
----
-
-
-Then check your nodes from the master:
-
-
-```bash
-kubectl get nodes
-```
-
-
----
-
-![Creating a Kubernetes Cluster](./kubernetes_cluster_13.png)
 
 ---
 
@@ -399,7 +436,7 @@ kubectl get pods
 ---
 
 
-
+<!-- Flannel backup
 ### Kubernetes stuck on ContainerCreating
 
 Use `kubectl describe pods` to list all the events associated with the pod, including pulling of images, starting of containers:
@@ -429,6 +466,7 @@ Now back to `kubeadm init --pod-network-cidr=10.244.0.0/16` and rebuild the depl
 ![Creating a Kubernetes Cluster](./kubernetes_cluster_15.png)
 
 ---
+-->
 
 
 ### Scaling
@@ -449,11 +487,12 @@ kubectl get pods
 ---
 
 
-To get rid of those pods you can scale it back down to 0 replicas:
+To get rid of those pods you can scale it back down to 0 replicas and to delete Nginx completely delete the deployment (not the pods - those would be respawned automatically):
 
 
 ```bash
 kubectl scale deployment nginx --replicas=0
+kubectl delete deployment nginx
 ```
 
 

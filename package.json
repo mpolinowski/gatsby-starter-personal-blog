@@ -32,14 +32,14 @@
     "eslint-plugin-react": "^7.11.1",
     "prettier": "^1.16.4",
     "sharp-cli": "^1.7.2",
-    "webpack-bundle-analyzer": "^3.0.3"
+    "webpack-bundle-analyzer": "^3.0.4"
   },
   "dependencies": {
     "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.1",
     "color": "^3.1.0",
     "core-js": "^2.6.4",
-    "gatsby": "^2.0.118",
+    "gatsby": "^2.0.119",
     "gatsby-image": "^2.0.25",
     "gatsby-plugin-catch-links": "^2.0.9",
     "gatsby-plugin-feed": "^2.0.11",
