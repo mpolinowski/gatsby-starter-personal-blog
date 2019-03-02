@@ -1,7 +1,7 @@
 ---
 title: react-transition-group
 subTitle: Introduction to animated transitions with React Router
-category: "React.js"
+category: "Javascript"
 date: 2018-01-15
 cover: photo-11628005984_73bc506457_o-cover.png
 hero: photo-11628005984_73bc506457_o.png
@@ -17,13 +17,12 @@ It is using the official [React Router documentation](https://reacttraining.com/
 
 <!-- TOC -->
 
-- [react-transition-group](#react-transition-group)
-  - [Introduction to animated transitions with React Router](#introduction-to-animated-transitions-with-react-router)
-    - [create-react-app](#create-react-app)
-    - [React Router](#react-router)
-    - [Page Components & URL parameters](#page-components--url-parameters)
-    - [Using Switch to catch 404's](#using-switch-to-catch-404s)
-    - [Adding Transitions to Routes](#adding-transitions-to-routes)
+- [Introduction to animated transitions with React Router](#introduction-to-animated-transitions-with-react-router)
+  - [create-react-app](#create-react-app)
+  - [React Router](#react-router)
+  - [Page Components & URL parameters](#page-components--url-parameters)
+  - [Using Switch to catch 404's](#using-switch-to-catch-404s)
+  - [Adding Transitions to Routes](#adding-transitions-to-routes)
 
 <!-- /TOC -->
 

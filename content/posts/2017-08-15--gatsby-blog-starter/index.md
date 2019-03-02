@@ -1,7 +1,7 @@
 ---
 title: Gatsby Blog Starter
 subTitle: Build a JAM Stack Blog with Gatsby.js
-category: "Gatsby.js"
+category: "Javascript"
 date: 2017-08-15
 cover: photo-34475132951_e3ff74c679_o-cover.png
 hero: photo-34475132951_e3ff74c679_o.png
@@ -33,12 +33,12 @@ gatsby new gatsby-blog
 
 This is the second mini-project that I am going to use Gatsby in - check out the [first one](https://github.com/mpolinowski/gatsby-wiki) for a more detailed description of all the basics steps of setting up Gatsby.
 
-01. [gatsby-source-filesystem](#01-gatsby-source-filesystem)
-02. [gatsby-transformer-remark](#02-gatsby-transformer-remark)
-03. [Creating a first Blog Post](#03-creating-a-first-blog-post)
-04. [Creating an Index Page](#04-creating-an-index-page)
-05. [Filters & Sorting With GraphQL](#05-filters--sorting-with-graphql)
-06. [Static Serve](#06-static-serve)
+- [01 gatsby-source-filesystem](#01-gatsby-source-filesystem)
+- [02 gatsby-transformer-remark](#02-gatsby-transformer-remark)
+- [03 Creating a first Blog Post](#03-creating-a-first-blog-post)
+- [04 Creating an Index Page](#04-creating-an-index-page)
+- [05 Filters & Sorting With GraphQL](#05-filters--sorting-with-graphql)
+- [06 Static Serve](#06-static-serve)
 
 
 

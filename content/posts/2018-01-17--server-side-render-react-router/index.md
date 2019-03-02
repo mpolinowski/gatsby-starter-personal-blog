@@ -1,7 +1,7 @@
 ---
 title: Server Rendering with React and React Router
 subTitle: Server side rendering a React app can provide a few different benefits including performance and SEO. The problem is with those benefits comes a cost of additional complexity to your application. In this project, we'll start from scratch and slowly build a server side rendered React 16.3 with React Router 4.
-category: "React.js"
+category: "Javascript"
 date: 2018-01-17
 cover: photo-11627973773_7295195845_o-cover.png
 hero: photo-11627973773_7295195845_o.png

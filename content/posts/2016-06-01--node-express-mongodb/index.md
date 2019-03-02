@@ -1,7 +1,7 @@
 ---
 title: Node/Express with MongoDB
 subTitle: Building a Express Web Library with a MongoDB Backend and Goodreads API Integration
-category: "Express.js"
+category: "Javascript"
 date: 2016-06-01
 cover: photo-34445934842_9cbfb7dfcb_o-cover.jpg
 hero: photo-34445934842_9cbfb7dfcb_o.jpg

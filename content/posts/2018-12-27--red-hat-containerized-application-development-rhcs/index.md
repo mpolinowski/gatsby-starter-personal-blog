@@ -1,7 +1,7 @@
 ---
 title: Red Hat Certified Specialist in Containerized Application Development
 subTitle: An IT professional who is a Red Hat Certified Specialist in Containerized Application Development has demonstrated the skills, knowledge, and abilities needed to create, update container images and run and link containers. 
-category: "LINUX"
+category: "Container"
 date: 2018-12-27
 cover: photo-11629527996_e8a3d50fde_o-cover.png
 hero: photo-11629527996_e8a3d50fde_o.jpg
@@ -32,38 +32,34 @@ Technologies used:
 
 <!-- TOC -->
 
-- [Network Time Protocol Service](#network-time-protocol-service)
-- [Setting a Hostname](#setting-a-hostname)
-- [FirewallD](#firewalld)
-    - [Disable SELinux Enforcement](#disable-selinux-enforcement)
-    - [Add a FirewallD Service](#add-a-firewalld-service)
-- [Install Docker & Kuberenetes on CentOS](#install-docker--kuberenetes-on-centos)
-    - [Configuring the Master Server](#configuring-the-master-server)
-    - [Configuring Nodes](#configuring-nodes)
-        - [Install Docker & Kuberenetes on Debian](#install-docker--kuberenetes-on-debian)
-- [Working with Containers](#working-with-containers)
-    - [Provisioning a MySQL Database](#provisioning-a-mysql-database)
-    - [Connecting to your MySQL Database](#connecting-to-your-mysql-database)
-- [Linking Containers](#linking-containers)
-- [Accessing a Container](#accessing-a-container)
-- [Container Logs](#container-logs)
-- [Listening to Docker Events](#listening-to-docker-events)
-- [Inspect Docker Container](#inspect-docker-container)
-- [Exposing Containers](#exposing-containers)
-- [Persistent Storage for Containers](#persistent-storage-for-containers)
-    - [Shared persistent Storage Volumes](#shared-persistent-storage-volumes)
-- [Host and Container Basic Security](#host-and-container-basic-security)
-- [Orchestrating Containers Using Kubernetes](#orchestrating-containers-using-kubernetes)
-- [Working with Images](#working-with-images)
-    - [Build a Custom Image Container](#build-a-custom-image-container)
-- [Managing Images](#managing-images)
-    - [Image Lifecycle](#image-lifecycle)
-    - [Application Workflow](#application-workflow)
-- [Multiple Container Application Deployment](#multiple-container-application-deployment)
-    - [Database Installation](#database-installation)
-    - [Wordpress Configuration](#wordpress-configuration)
-    - [Creating the Docker Container](#creating-the-docker-container)
-    - [Kubernetes Service Configuration](#kubernetes-service-configuration)
+- [How the controller-manager, scheduler, and proxy find the apiserver](#how-the-controller-manager-scheduler-and-proxy-find-the-apiserver)
+- [The address on the local server to listen to.](#the-address-on-the-local-server-to-listen-to)
+- [The port on the local server to listen on.](#the-port-on-the-local-server-to-listen-on)
+- [Port minions listen on](#port-minions-listen-on)
+- [default admission control policies](#default-admission-control-policies)
+- [KUBE_ADMISSION_CONTROL="--admission-control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextD$bash](#kubeadmissioncontrol%22--admission-controlnamespacelifecyclenamespaceexistslimitrangersecuritycontextdbash)
+- [kubernetes kubelet (minion) config](#kubernetes-kubelet-minion-config)
+- [The address for the info server to serve on (set to 0.0.0.0 or "" for all interfaces)](#the-address-for-the-info-server-to-serve-on-set-to-0000-or-%22%22-for-all-interfaces)
+- [The port for the info server to serve on](#the-port-for-the-info-server-to-serve-on)
+- [You may leave this blank to use the actual hostname](#you-may-leave-this-blank-to-use-the-actual-hostname)
+- [location of the api-server](#location-of-the-api-server)
+- [pod infrastructure container](#pod-infrastructure-container)
+- [KUBELET_POD_INFRA_CONTAINER="--pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructur$](#kubeletpodinfracontainer%22--pod-infra-container-imageregistryaccessredhatcomrhel7pod-infrastructur)
+- [How the controller-manager, scheduler, and proxy find the apiserver](#how-the-controller-manager-scheduler-and-proxy-find-the-apiserver-1)
+- [a test file](#a-test-file)
+- [Or just WORKDIR $new_work_dir](#or-just-workdir-newworkdir)
+- [this results in def=hello and ghi=byedockerfile](#this-results-in-defhello-and-ghibyedockerfile)
+- [This is a template for an httpd hosted static website](#this-is-a-template-for-an-httpd-hosted-static-website)
+- [This is a template for an httpd hosted static website](#this-is-a-template-for-an-httpd-hosted-static-website-1)
+- [Docker file for the centos7-wordpress-shared image](#docker-file-for-the-centos7-wordpress-shared-image)
+- [Install our Apache and PHP](#install-our-apache-and-php)
+- [Get & Unzip Wordpress files](#get--unzip-wordpress-files)
+- [Remove the Apache default page](#remove-the-apache-default-page)
+- [Replace it with Wordpress](#replace-it-with-wordpress)
+- [Replace the Wordpress default Congfig](#replace-the-wordpress-default-congfig)
+- [Remove the Wordpress Sample Config](#remove-the-wordpress-sample-config)
+- [Expose the Web Port](#expose-the-web-port)
+- [Run Apache when container starts](#run-apache-when-container-starts)
 
 <!-- /TOC -->
 

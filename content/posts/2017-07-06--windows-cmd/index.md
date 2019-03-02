@@ -1,7 +1,7 @@
 ---
 title: Windows CMD
 subTitle: You can create a bootable USB flash drive to use to deploy your OS of choice . The first step is to prepare the USB flash drive by using DiskPart, which is a command-line utility.
-category: "cmd"
+category: "Windows"
 date: 2017-07-06
 cover: photo-11627014666_359f04f9db_o-cover.png
 hero: photo-11627014666_359f04f9db_o.png

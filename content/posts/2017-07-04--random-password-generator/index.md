@@ -1,7 +1,7 @@
 ---
 title: Random Password Generator
 subTitle: We want to use the React App generator to create static pages from our React Pass-Gen App, routed through a Node/Express Server.
-category: "React.js"
+category: "Javascript"
 date: 2017-07-04
 cover: photo-34445476982_dccd0eb8e7_o-cover.png
 hero: photo-34445476982_dccd0eb8e7_o.png

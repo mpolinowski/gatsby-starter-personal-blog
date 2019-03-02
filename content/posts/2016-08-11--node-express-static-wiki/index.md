@@ -1,7 +1,7 @@
 ---
 title: Node Express Static
 subTitle: Building a product Wiki based on Node.js, Express.js, AMP and Elasticsearch
-category: "Node.js"
+category: "Javascript"
 date: 2016-08-11
 cover: photo-11626620916_804d27ae54_o-cover.png
 hero: photo-11626620916_804d27ae54_o.png

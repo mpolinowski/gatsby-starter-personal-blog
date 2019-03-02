@@ -1,6 +1,7 @@
 ---
 title: Umlaute
 subTitle: Hack your US keyboard to be able to type German Umlaute
+category: "Windows"
 date: 2017-12-19
 cover: photo-33795787813_cf3d8edcc6_o-cover.png
 hero: photo-33795787813_cf3d8edcc6_o.png

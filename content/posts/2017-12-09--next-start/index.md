@@ -1,7 +1,7 @@
 ---
 title: Next.js Server Side Rendering
 subTitle: A first look at Next.js Version 4!
-category: "Next.js"
+category: "Javascript"
 date: 2017-12-09
 cover: photo-34221454260_1d42dbe06f_o-cover.png
 hero: photo-34221454260_1d42dbe06f_o.png
@@ -60,11 +60,13 @@ The final Application
 
 __TOC__
 
-01. [Basic Setup](#01-basic-setup)
-02. [Styling](#02-styling)
-    * [Example](#example)
-03. [Bootstrap 4](#03-bootstrap-4)
-04. [Advanced Routing](#04-advanced-routing)
+- [Next.js](#nextjs)
+  - [On my way to figure out to find the best way to deploy a React App](#on-my-way-to-figure-out-to-find-the-best-way-to-deploy-a-react-app)
+  - [01 Basic Setup](#01-basic-setup)
+  - [02 Styling](#02-styling)
+  - [Example](#example)
+  - [03 Bootstrap 4](#03-bootstrap-4)
+  - [04 Advanced Routing](#04-advanced-routing)
 
 
 

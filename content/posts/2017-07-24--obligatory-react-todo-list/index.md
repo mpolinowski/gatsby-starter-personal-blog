@@ -1,7 +1,7 @@
 ---
 title: React TODO List
 subTitle: Every web-dev should have one or two of them on Github ~
-category: "React.js"
+category: "Javascript"
 date: 2017-07-24
 cover: photo-33796026903_2023fedff3_o-cover.jpg
 hero: photo-33796026903_2023fedff3_o.jpg

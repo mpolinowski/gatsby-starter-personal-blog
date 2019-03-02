@@ -1,7 +1,7 @@
 ---
 title: Gatsby Material UI Starter
 subTitle: Set up a website with Gatsby.js and Material UI
-category: "Material UI"
+category: "Javascript"
 date: 2018-01-07
 cover: photo-11627373604_ef9d24436e_o-cover.png
 hero: photo-11627373604_ef9d24436e_o.png
