@@ -19,6 +19,10 @@ hero: photo-34475542491_9069464269_o.jpg
   - [Fetch Response Methods](#fetch-response-methods)
   - [Fetch Error Handling](#fetch-error-handling)
   - [Fetch Working with Headers](#fetch-working-with-headers)
+  - [Fetch Working with JSON Endpoints](#fetch-working-with-json-endpoints)
+  - [Fetch Working with JSON Endpoints Part II](#fetch-working-with-json-endpoints-part-ii)
+  - [Fetch Working with JSON Endpoints Part III](#fetch-working-with-json-endpoints-part-iii)
+  - [Building a Mini Application to interact with REST APIs](#building-a-mini-application-to-interact-with-rest-apis)
 
 <!-- /TOC -->
 
@@ -711,3 +715,430 @@ function getInput() {
   })
 }
 ```
+
+
+
+
+### Fetch Working with JSON Endpoints
+
+The website [myjson.com](http://myjson.com/) allows you to store JSON data and access it through an URL. Just type a valid JSON object into the input field and press __Save__ to be given an URL you can retrieve this information from:
+
+
+![Javascript APIs](./Javascript_APIs_21.png)
+
+
+After clicking on save, the following URL was generated for me: `https://api.myjson.com/bins/m1l12`. Accessing this URL returns the JSON data as an text output. We can now use this URL for our fetch request:
+
+
+```js
+const btn = document.querySelector("button")
+const output = document.querySelector("#output")
+const intake = document.querySelector("input")
+
+const url = "https://api.myjson.com/bins/m1l12"
+
+btn.addEventListener("click", getInput)
+
+
+function getInput() {
+  fetch(url).then(function (response) {
+    return response.json();
+  }).then(function (data) {
+    console.log(data);
+  }).catch(function (error) {
+    console.log(error);
+  })
+}
+```
+
+Running the script inside our browser will return the information in form of a Javascript object:
+
+
+![Javascript APIs](./Javascript_APIs_22.png)
+
+
+We can also add a new addition to Javascript to clean up our function - the __Arrow Function__:
+
+
+```js
+function getInput() {
+  fetch(url).then(res => res.json())
+  .then(json => console.log(json))
+  .catch(error => console.log(error))
+}
+```
+
+
+We can write a JSON object that contains an array that allows us to loop through the API response:
+
+
+```json
+{
+    "results": [{
+        "gender": "male",
+        "name": {
+            "title": "mr",
+            "first": "hellmut",
+            "last": "merz"
+        }
+    }, {
+        "gender": "female",
+        "name": {
+            "title": "ms",
+            "first": "یسنا",
+            "last": "رضاییان"
+        }
+    }, {
+        "gender": "female",
+        "name": {
+            "title": "mrs",
+            "first": "elsa",
+            "last": "simon"
+        }
+    }]
+}
+```
+
+
+Adding the following for loop to the fetch request will give us the list of three names:
+
+
+```js
+function getInput() {
+  fetch(url).then(res => res.json())
+    .then(function (data) {
+      for (let i = 0; i < data.results.length; i++) {
+        console.log(data.results[i].name.last + ", " + data.results[i].name.first)
+      }
+    })
+    .catch(error => console.log(error))
+}
+```
+
+
+![Javascript APIs](./Javascript_APIs_23.png)
+
+
+
+
+### Fetch Working with JSON Endpoints Part II
+
+Another place to test your Javascript against a fake REST API is [JSONPlaceholder](http://jsonplaceholder.typicode.com/). For example the URL `http://jsonplaceholder.typicode.com/photos` will give you a result of 5000 photos in an JSON array:
+
+
+![Javascript APIs](./Javascript_APIs_24.png)
+
+
+The following script will log the URL to the first thumbnail image to your browser console and will set the source for the empty image tag `<img src="">` inside your html to this URL:
+
+
+```js
+const btn = document.querySelector("button")
+const output = document.querySelector("#output")
+const intake = document.querySelector("input")
+
+const url = "http://jsonplaceholder.typicode.com/photos"
+
+btn.addEventListener("click", getInput)
+
+
+function getInput() {
+  fetch(url).then(res => res.json())
+    .then(function (data) {
+      console.log(data[0].thumbnailUrl)
+      document.querySelector("img").src=data[0].thumbnailUrl;
+    })
+    .catch(error => console.log(error))
+}
+```
+
+
+![Javascript APIs](./Javascript_APIs_25.png)
+
+
+
+
+### Fetch Working with JSON Endpoints Part III
+
+Yet another API to use is [Swapi](https://swapi.co/), the Star Wars API. We can connect to it using the following script:
+
+
+```js
+const btn = document.querySelector("button")
+const output = document.querySelector("#output")
+const intake = document.querySelector("input")
+
+const url = "https://swapi.co/api/"
+
+btn.addEventListener("click", getInput)
+
+
+function getInput() {
+  fetch(url).then(res => res.json())
+    .then(function (data) {
+      console.log(data)
+    })
+    .catch(error => console.log(error))
+}
+```
+
+
+![Javascript APIs](./Javascript_APIs_26.png)
+
+
+Testing the script shows us that there are sub categories that we can query - for example, we can just fetch information about planets in the Star Wars Universe by changing the Fetch URL to `https://swapi.co/api/planets`. 
+
+
+![Javascript APIs](./Javascript_APIs_27.png)
+
+
+We can see that the database found us 61 planets but only returned 10 of them + an URL to get the next 10 `https://swapi.co/api/planets/?page=2` - making it easy to paginate through large amount of data.
+
+
+To get the name of a specific planet - lets say the ninths from the array - we just need to change the console.log() to `console.log(data.results[8].name)`:
+
+
+![Javascript APIs](./Javascript_APIs_28.png)
+
+
+
+
+### Building a Mini Application to interact with REST APIs
+
+And another API - this time one called [REST Countries](https://restcountries.eu/) that gives us access to a large quantity of information about countries - capital cities, language spoken, currency, etc. The complete set of data can be queried with the following URL `https://restcountries.eu/rest/v2/all`:
+
+
+![Javascript APIs](./Javascript_APIs_29.png)
+
+
+We can start by checking the API response with the following script:
+
+
+```js
+const btn = document.querySelector("button")
+const output = document.querySelector("#output")
+const intake = document.querySelector("input")
+
+const url = "https://restcountries.eu/rest/v2/all"
+
+btn.addEventListener("click", getInput)
+
+
+function getInput() {
+  fetch(url).then(res => res.json())
+    .then(function (data) {
+      console.log(data)
+    })
+    .catch(error => console.log(error))
+}
+```
+
+
+This returns to us the result we have seen earlier in form of a Javascript object that contains the first 250 countries:
+
+
+![Javascript APIs](./Javascript_APIs_30.png)
+
+
+We can now make a change to our script to no longer `console.log()` the result but instead writing the result into an object we call __responseObject__. We will create it first as an empty object and then add the `data` from the API response to it:
+
+
+```js
+const btn = document.querySelector("button")
+const output = document.querySelector("#output")
+const intake = document.querySelector("input")
+
+const url = "https://restcountries.eu/rest/v2/all"
+let responseObject = {}
+
+fetch(url).then(res => res.json())
+  .then(function (data) {
+    responseObject = data;
+  })
+  .catch(error => console.log(error));
+```
+
+
+![Javascript APIs](./Javascript_APIs_31.png)
+
+
+You will be able to query the __responseObject__ after you refreshed the page - it does contain the API data.
+
+
+We can now use a helper function to split up every country into it's own object and prepare it to be inserted into a __select element__ on our page:
+
+
+```js
+fetch(url).then(res => res.json())
+  .then(function (data) {
+    responseObject = data;
+    buildSelect(data);
+  })
+  .catch(error => console.log(error));
+
+
+ function buildSelect(data) {
+   let select = document.createElement('select');
+   data.forEach(function(item) {
+     let option = document.createElement('option');
+     console.log(item);
+   })
+ }
+```
+
+
+![Javascript APIs](./Javascript_APIs_32.png)
+
+
+We can additionally output the index number of each country to be able to reference them:
+
+
+```js
+ function buildSelect(data) {
+   let select = document.createElement('select');
+   data.forEach(function(item, index) {
+     let option = document.createElement('option');
+     console.log(item, index);
+   })
+ }
+```
+
+
+![Javascript APIs](./Javascript_APIs_33.png)
+
+
+
+Now we need to assign each country to an option from the select drop-down menu using the index number and use the country name as textContent:
+
+
+```js
+ function buildSelect(data) {
+   let select = document.createElement('select');
+   data.forEach(function(item, index) {
+     let option = document.createElement('option');
+     console.log(item, index);
+     option.value = index;
+     option.textContent = item.name;
+     select.appendChild(option);
+   })
+   document.querySelector('body').appendChild(select);
+ }
+```
+
+
+![Javascript APIs](./Javascript_APIs_34.png)
+
+
+We can now get rid of the input field and click button and instead add an event listener that detects when the user selects an option and displays the corresponding country information below the drop down menu. We will start with adding the eventListener that reacts to _Change_ and `console.log()` the event with another helper function:
+
+
+```js
+function buildSelect(data) {
+   let select = document.createElement('select');
+   data.forEach(function(item, index) {
+     let option = document.createElement('option');
+     console.log(item, index);
+     option.value = index;
+     option.textContent = item.name;
+     select.appendChild(option);
+   })
+   select.addEventListener("change", outputData)
+   document.querySelector('body').appendChild(select);
+ }
+
+
+ function outputData(e) {
+   console.log(e);
+ }
+```
+
+
+![Javascript APIs](./Javascript_APIs_35.png)
+
+
+From this event log we now need to record the target value - which corresponds to the index number of the selected country. This number can then be used to select the country out of the __responseObject__:
+
+
+```js
+function buildSelect(data) {
+   let select = document.createElement('select');
+   data.forEach(function(item, index) {
+     let option = document.createElement('option');
+     console.log(item, index);
+     option.value = index;
+     option.textContent = item.name;
+     select.appendChild(option);
+   })
+   select.addEventListener("change", outputData)
+   document.querySelector('body').appendChild(select);
+ }
+
+
+ function outputData(e) {
+   console.log(e.target.value);
+   console.log(responseObject[e.target.value]);
+ }
+```
+
+
+![Javascript APIs](./Javascript_APIs_36.png)
+
+
+In this example I selected the __188__ out of the drop-down menu. Comparing this number to the index number of our __responseObject__ gives us all country information of `Saint Helena, Ascension and Tristan da Cunha`.
+
+
+We can now clean this function up a little and add an HTML output to it, to be able to display the information on our web site:
+
+
+```html
+<html>
+    <title>Javascript API Course</title>
+    <body>
+        <div id="output"></div>
+        <img src="" style="max-width: 100px;">
+        <script src="fetch-json"></script>
+    </body>
+</html>
+```
+
+
+```js
+const output = document.querySelector("#output");
+const url = "https://restcountries.eu/rest/v2/all";
+let responseObject = {};
+fetch(url).then(res => res.json())
+  .then(function (data) {
+    responseObject = data;
+    buildSelect(data);
+  })
+  .catch(error => console.log(error));
+
+
+function buildSelect(data) {
+    let select = document.createElement('select');
+    data.forEach(function (item, index) {
+        let option = document.createElement('option');        
+        option.value = index;
+        option.textContent = item.name;
+        select.appendChild(option);
+    })
+    select.addEventListener("change",outputData);
+    document.querySelector('body').appendChild(select);
+}
+
+
+function outputData(e){
+    let country = responseObject[e.target.value];
+    console.log(country);
+    output.innerHTML = '<h1>'+country.name+'</h1>';
+    output.innerHTML += '<p><strong>Native Name</strong>: '+country.nativeName+'</p>';
+    output.innerHTML += '<p><strong>Population</strong>: '+country.population+'</p>';
+    document.querySelector('img').src = country.flag;
+    output.innerHTML += '<p><strong>Capital</strong>: '+country.capital+'</p>';
+    output.innerHTML += '<p><strong>Region</strong>: '+country.region+'</p>';
+    output.innerHTML += '<p><strong>Sub-Region</strong>: '+country.subregion+'</p>';
+}
+```
+
+
+![Javascript APIs](./Javascript_APIs_37.png)
