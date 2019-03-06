@@ -8,7 +8,7 @@ hero: photo-15514459555_50b13064fa_o.png
 ---
 
 
-![Battambang, Cambodia](./photo-15514459555_50b13064fa_o.png)
+![Jomsom, Nepal](./photo-15514459555_50b13064fa_o.png)
 
 
 <!-- TOC -->
@@ -17,6 +17,8 @@ hero: photo-15514459555_50b13064fa_o.png
   - [Install Elasticsearch](#install-elasticsearch)
   - [Install Kibana](#install-kibana)
   - [Secure Elasticsearch](#secure-elasticsearch)
+  - [Disable X-Pack security module](#disable-x-pack-security-module)
+  - [Upgrading the plugin](#upgrading-the-plugin)
   - [Securing Kibana](#securing-kibana)
 
 <!-- /TOC -->
@@ -277,6 +279,53 @@ for descriptions of what these permissions allow and the associated risks.
 
 Continue with installation? [y/N]y
 -> Installed readonlyrest
+```
+
+### Disable X-Pack security module
+
+__(applies to ES 6.4.0 or greater)__
+
+ReadonlyREST and X-Pack security module can't run together, so the latter needs to be disabled.
+
+Edit _elasticsearch.yml_ and append `xpack.security.enabled: false`:
+
+
+```bash
+$ES_HOME/conf/elasticsearch.yml
+```
+
+
+### Upgrading the plugin
+
+To upgrade ReadonlyREST for Elasticsearch:
+
+1. Stop Elasticsearch.
+Either kill the process manually, or use:
+
+```
+service stop elasticsearch
+```
+
+depending on your environment.
+
+2. Uninstall ReadonlyREST
+
+```
+bin/elasticsearch-plugin remove readonlyrest
+```
+
+3. Install the new version of ReadonlyREST into Elasticsearch.
+
+```
+bin/elasticsearch-plugin install file://<download_dir>/readonlyrest-<ROR_VERSION>_es<ES_VERSION>.zip
+```
+e.g. bin/elasticsearch-plugin install file:///tmp/readonlyrest-1.16.15_es6.1.1.zip
+
+
+4. Restart Elasticsearch.
+
+```
+service start elasticsearch
 ```
 
 

@@ -69,7 +69,7 @@ server {
 
 ## Create a https NGINX Application running in a Kubernetes Cluster
 
-Create a secret and a configmap:
+The first thing we’ll do is define our endpoint by creating a ConfigMap that stores our Nginx configuration as well as creating a secret from the SSL certs we just created:
 
 
 ```bash
@@ -163,7 +163,7 @@ Then create a __Service__ and a __Replication Controller__ using the configurati
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginxsvc
+  name: nginx
   labels:
     app: nginx
 spec:
@@ -183,7 +183,7 @@ spec:
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: my-nginx
+  name: nginx
 spec:
   replicas: 1
   template:
