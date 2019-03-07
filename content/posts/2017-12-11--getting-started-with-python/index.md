@@ -21,6 +21,12 @@ hero: photo-34445490202_b13f40bd9d_o.png
     - [Strings](#strings)
     - [Numbers](#numbers)
     - [Booleans](#booleans)
+    - [Lists](#lists)
+    - [Set](#set)
+    - [Tuples](#tuples)
+    - [Ranges](#ranges)
+    - [Dictionaries](#dictionaries)
+    - [Conversion between Data Types](#conversion-between-data-types)
 
 <!-- /TOC -->
 
@@ -83,3 +89,81 @@ print(user_says)
 #### Booleans
 
 ![Python](./python_07.png)
+
+
+
+#### Lists
+
+![Python](./python_08.png)
+
+![Python](./python_09.png)
+
+![Python](./python_10.png)
+
+
+
+#### Set
+
+Sets = unordered lists of __unique items__.
+
+
+![Python](./python_11.png)
+
+
+You can create a set from a list to remove duplicates.
+
+
+![Python](./python_12.png)
+
+
+![Python](./python_13.png)
+
+
+![Python](./python_14.png)
+
+
+Just as list before sets are mutable - you can add or remove elements at will. To create an immutable set from a list you have to use __FrozenSets__:
+
+
+![Python](./python_15.png)
+
+
+
+#### Tuples
+
+Tuples are immutable list - elements cannot be added or removed once the tuples was created.
+
+
+![Python](./python_16.png)
+
+
+Tuples allow you to map values to variables by assigning a tuple, made up of variables, to a tuple, made up of values:
+
+
+![Python](./python_17.png)
+
+
+
+#### Ranges
+
+
+![Python](./python_18.png)
+
+
+
+#### Dictionaries
+
+Dictionaries are an unordered list of key-value pairs. Every key has to be unique and should be of an immutable type - strings, numbers or tuples.
+
+
+![Python](./python_19.png)
+
+
+
+#### Conversion between Data Types
+
+
+![Python](./python_20.png)
+
+
+![Python](./python_21.png)
