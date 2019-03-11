@@ -63,7 +63,7 @@ You can list the available objects and determine an object's number or drive let
 6. Type `clean`, and the click `ENTER`. This command deletes all data from the USB flash drive.
 7. To create a new primary partition on the USB flash drive, type `create part pri`, and then click `ENTER`.
 8. To select the partition that you just created, type `select part 1`, and then click `ENTER`.
-9. To format the partition, type format `fs=ntfs` quick, and then click `ENTER`.
+9. To format the partition, type `format fs=ntfs` quick, and then click `ENTER`.
 
 > Important
 >
