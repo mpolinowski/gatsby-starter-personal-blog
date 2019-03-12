@@ -18,6 +18,10 @@ hero: photo-34607488365_9f40aafb01_o.jpg
   - [Creating the Load Balancing Service](#creating-the-load-balancing-service)
   - [Create two Web Apps to Respond to the incoming Traffic](#create-two-web-apps-to-respond-to-the-incoming-traffic)
   - [Creating the Ingress](#creating-the-ingress)
+- [Testing the Ingress](#testing-the-ingress)
+- [Adding a Node.js / Express.js Web App](#adding-a-nodejs--expressjs-web-app)
+  - [Preparing the NGINX Ingress](#preparing-the-nginx-ingress)
+  - [It could be so easy, but...](#it-could-be-so-easy-but)
 
 <!-- /TOC -->
 
@@ -490,7 +494,137 @@ kubectl create -f nginx-ingress.yaml
 ![NGINX Ingress for your Kubernetes Cluster](./kubernetes-ingress_06.png)
 
 
+## Testing the Ingress
+
 You should now be able to see that the service was created with `kubectl get svc --namespace=ingress-nginx` and access your two apps via the WAN IP of your Kubernetes Master (see remark above about the `externalIP`):
 
 
 ![NGINX Ingress for your Kubernetes Cluster](./kubernetes-ingress_07.png)
+
+
+
+## Adding a Node.js / Express.js Web App
+
+We [earlier created](https://mpolinowski.github.io/express-generator-dockerrized/) a [Node.js](https://nodejs.org/en/) Web App that uses [Express.js](https://expressjs.com/en/starter/static-files.html) to host web content and wrapped it into an Docker container. I want to try to add this docker image and use the web app behind the NGINX Ingress.
+
+
+For this app we used the [Express Generator](https://expressjs.com/en/starter/generator.html) to scaffold a simple website that consist of 2 pages - one hosted on the app root `/`, the other one under `/users`. This was set up inside the __app.js__ file the following way:
+
+```js
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
+
+...
+
+
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+```
+
+We are importing a router that is responsible for a specific route. The router itself - e.g. in case of the `/users` route just replies with a string once sends a GET:
+
+
+```js
+var express = require('express');
+var router = express.Router();
+
+/* GET users listing. */
+router.get('/', function(req, res, next) {
+  res.send('User Login');
+});
+
+module.exports = router;
+```
+
+
+### Preparing the NGINX Ingress
+
+We can now add the app to our Ingress configuration as follows:
+
+__nginx-ingress.yaml__
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+        - path: /web
+          backend:
+            serviceName: web-service
+            servicePort: 5678
+        - path: /mobile
+          backend:
+            serviceName: mobile-service
+            servicePort: 5678
+        - path: /test
+          backend:
+            serviceName: test-service
+            servicePort: 3000
+```
+
+We just added a third route to the Ingress on `/test` and assigned the service port that our Express app is running on - the port for the app is defined in `.\bin\www` :
+
+
+```js
+var port = normalizePort(process.env.PORT || '3000');
+```
+
+
+Great now we could push the app to Docker Hub - e.g. to __mpolinowski/docker-node-express__ - and create the following Pod and Service configuration for it:
+
+
+```yaml
+kind: Pod
+apiVersion: v1
+metadata:
+  name: web-app
+  labels:
+    app: web
+spec:
+  containers:
+    - name: web-app
+      image: mpolinowski/docker-node-express
+      ports:
+        - containerPort: 3000
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: web-service
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 3000
+```
+
+And run it and access our app on the Master servers WAN IP with the URL `/test` ....
+
+
+### It could be so easy, but...
+
+You will get a 404 from NGINX - the Ingress is working (good!), but there is nothing hosting on that URL. What went wrong here is the __Path Prefix__ is messing with our app routing. `/test` should lead us to the root of our web app - at least that is what I expected (this is how the router in Express.js works). But Ingress just recognizes that `/test` belongs to our web app and then routes `/test` to it. Since we only have the `/` and `/users` route defined, this leads us to a 404 from NGINX.
+
+
+To fix this, we have to go back to the __app.js__ of our web app and add the __Path Prefix__ to every route:
+
+```js
+app.use('/test', indexRouter);
+app.use('/test/users', usersRouter);
+```
+
+Now rebuilding the Docker image, re-uploading it to Docker Hub and restarting the image in Kubernetes gives us the result we needed:
+
+
+![NGINX Ingress for your Kubernetes Cluster](./kubernetes-ingress_08.png)
+
+
+We added the NGINX Ingress to our Kubernetes cluster and used NGINX to proxy three web apps that can now be reached over the internet under the routes `<Cluster WAN IP>\web`, `<Cluster WAN IP>\mobile`, `<Cluster WAN IP>\test`

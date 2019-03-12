@@ -19,7 +19,7 @@ hero: photo-76834w36_4356dfgdsds_o.png
 
 <!-- /TOC -->
 
-
+> DRAFT - this article is still undergoing some "research"...
 
 When trying to run a Kubernetes cluster in China you quickly realize that 404s will take away the fun from it. This tutorial is based on a [Github repository](https://github.com/mpolinowski/kubernetes-for-china) but re-written to cater for CentOS servers.
 

@@ -21,6 +21,8 @@ hero: photo-34607876585_6e59cd762e_o.png
 
 <!-- /TOC -->
 
+> DRAFT - this article is still undergoing some "research"...
+
 
 
 ## Bare-metal considerations
