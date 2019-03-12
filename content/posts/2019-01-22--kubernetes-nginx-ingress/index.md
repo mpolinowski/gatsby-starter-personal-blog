@@ -508,7 +508,7 @@ You should now be able to see that the service was created with `kubectl get svc
 We [earlier created](https://mpolinowski.github.io/express-generator-dockerrized/) a [Node.js](https://nodejs.org/en/) Web App that uses [Express.js](https://expressjs.com/en/starter/static-files.html) to host web content and wrapped it into an Docker container. I want to try to add this docker image and use the web app behind the NGINX Ingress.
 
 
-For this app we used the [Express Generator](https://expressjs.com/en/starter/generator.html) to scaffold a simple website that consist of 2 pages - one hosted on the app root `/`, the other one under `/users`. This was set up inside the __app.js__ file the following way:
+For this app we used the [Express Generator](https://expressjs.com/en/starter/generator.html) to scaffold a simple website that consist of 2 pages - one hosted on the app root `/`, the other one under `/users` - [Github Repository](https://github.com/mpolinowski/docker-node-express). This was set up inside the __app.js__ file the following way:
 
 ```js
 var indexRouter = require('./routes/index');
