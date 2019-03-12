@@ -23,6 +23,11 @@ hero: photo-34607491985_e91fa7d4bc_o.png
   - [If](#if)
   - [For](#for)
   - [While](#while)
+- [Controlling a Loop](#controlling-a-loop)
+  - [Break](#break)
+  - [Continue](#continue)
+  - [Pass](#pass)
+- [Exceptions Handling](#exceptions-handling)
 
 <!-- /TOC -->
 
@@ -121,3 +126,88 @@ In the following nested __While Loop__ we have __x__ being incremented with each
 
 
 
+## Controlling a Loop
+
+### Break
+
+![Python](./python-basics_17.png)
+
+
+The loop runs until the if statement becomes __True__ and the break command is executed.
+
+
+![Python](./python-basics_18.png)
+
+
+In the second example we have a for loop that tries to multiply every element of _list1_ with every element in _list2_. But the __Break__ command stops the execution when the last element of _list2_ is reached:
+
+```
+5 x 1 = 5
+5 x 2 => break
+6 x 1 = 6
+6 x 2 => break
+7 x 1 = 7
+7 x 2 => break
+8 x 1 = 8
+8 x 2 => break
+```
+
+
+### Continue
+
+
+![Python](./python-basics_19.png)
+
+
+The __Continue__ command is triggered when the second element of _list2_ is reached in the multiplication. But, unlike the __Break__ command, it does not stop the execution of the following multiplication:
+
+```
+4 x 1 = 4
+4 x 2 => break 
+4 x 3 = 12
+5 x 1 = 5
+5 x 2 => break
+5 x 3 = 15
+6 x 1 = 6
+6 x 2 => break
+6 x 3 = 18
+```
+
+
+### Pass
+
+
+![Python](./python-basics_20.png)
+
+
+The pass statement is just a placeholder that does nothing on execution - for debugging reasons or during the early concept phase of development.
+
+
+## Exceptions Handling
+
+
+![Python](./python-basics_21.png)
+
+
+The function is trying to divide all members of the range by Zero, which would cause ein __Exception Error__ in our code. But because we wrapped our function in a __try/except__ block, the error triggers the code below the _except command_ instead of just crashing the program. If the first function is successful, the exception code is not triggered.
+
+
+To catch all possible errors, just don't specify the error you are looking for - above we only caught `ZeroDivisionError`s. But it is recommended to rather add all possible errors to the block instead, to be able to differentiate between the possible root causes of the error (Catching all errors just gives you a generic error message):
+
+
+![Python](./python-basics_22.png)
+
+
+For debugging purposes you can also add an __Else  Clause__ at the bottom to get a feedback when a function was executed successfully:
+
+
+![Python](./python-basics_23.png)
+
+
+The code behind a __Finally Clause__ - unlike with __Else__ - is execute wether the function inside the __Try Block__ _was successfully executed or not_.
+
+
+![Python](./python-basics_24.1.png)
+
+
+![Python](./python-basics_24.2.png)
