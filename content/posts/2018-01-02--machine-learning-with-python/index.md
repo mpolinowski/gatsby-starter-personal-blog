@@ -14,6 +14,13 @@ hero: photo-33796028333_a7fa30ab08_o.jpg
 <!-- TOC depthFrom:2 depthTo:4 -->
 
 - [Prerequisite](#prerequisite)
+- [SciKit Introduction](#scikit-introduction)
+  - [Data Representation](#data-representation)
+  - [Data Preprocessing](#data-preprocessing)
+  - [SciKit-Learn API](#scikit-learn-api)
+    - [Estimation](#estimation)
+    - [Predictor](#predictor)
+    - [Transformer](#transformer)
 
 <!-- /TOC -->
 
