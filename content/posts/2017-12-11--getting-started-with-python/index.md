@@ -13,33 +13,30 @@ hero: photo-34445490202_b13f40bd9d_o.png
 
 <!-- TOC depthFrom:2 depthTo:4 -->
 
-- [Python - Introduction](#python---introduction)
-  - [Hello World](#hello-world)
-  - [User Input](#user-input)
-  - [Variables](#variables)
-  - [Data Types](#data-types)
-    - [Strings](#strings)
-    - [Numbers](#numbers)
-    - [Booleans](#booleans)
-    - [Lists](#lists)
-    - [Set](#set)
-    - [Tuples](#tuples)
-    - [Ranges](#ranges)
-    - [Dictionaries](#dictionaries)
-    - [Conversion between Data Types](#conversion-between-data-types)
+- [Hello World](#hello-world)
+- [User Input](#user-input)
+- [Variables](#variables)
+- [Data Types](#data-types)
+  - [Strings](#strings)
+  - [Numbers](#numbers)
+  - [Booleans](#booleans)
+  - [Lists](#lists)
+  - [Set](#set)
+  - [Tuples](#tuples)
+  - [Ranges](#ranges)
+  - [Dictionaries](#dictionaries)
+- [Conversion between Data Types](#conversion-between-data-types)
 
 <!-- /TOC -->
 
 
-## Python - Introduction
-
-### Hello World
+## Hello World
 
 ```python
 print("Hello World")
 ```
 
-### User Input
+## User Input
 
 ```python
 user_says = input ("Please enter a string: ")
@@ -50,12 +47,12 @@ print(user_says)
 `user_says` is a Python variable that is used to store data, in this case it is assigned the string from the input function. We can then print out the variable to see if it worked.
 
 
-### Variables
+## Variables
 
 ![Python](./python_01.png)
 
 
-### Data Types
+## Data Types
 
 * mutable data type
     * lists
@@ -68,7 +65,7 @@ print(user_says)
    *  frozensets
 
 
-#### Strings
+### Strings
 
 ![Python](./python_02.png)
 
@@ -80,19 +77,19 @@ print(user_says)
 
 
 
-#### Numbers
+### Numbers
 
 ![Python](./python_06.png)
 
 
 
-#### Booleans
+### Booleans
 
 ![Python](./python_07.png)
 
 
 
-#### Lists
+### Lists
 
 ![Python](./python_08.png)
 
@@ -102,7 +99,7 @@ print(user_says)
 
 
 
-#### Set
+### Set
 
 Sets = unordered lists of __unique items__.
 
@@ -129,7 +126,7 @@ Just as list before sets are mutable - you can add or remove elements at will. T
 
 
 
-#### Tuples
+### Tuples
 
 Tuples are immutable list - elements cannot be added or removed once the tuples was created.
 
@@ -144,14 +141,14 @@ Tuples allow you to map values to variables by assigning a tuple, made up of var
 
 
 
-#### Ranges
+### Ranges
 
 
 ![Python](./python_18.png)
 
 
 
-#### Dictionaries
+### Dictionaries
 
 Dictionaries are an unordered list of key-value pairs. Every key has to be unique and should be of an immutable type - strings, numbers or tuples.
 
@@ -160,7 +157,7 @@ Dictionaries are an unordered list of key-value pairs. Every key has to be uniqu
 
 
 
-#### Conversion between Data Types
+## Conversion between Data Types
 
 
 ![Python](./python_20.png)
