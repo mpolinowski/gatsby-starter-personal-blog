@@ -1,6 +1,6 @@
 ---
 title: Kubernetes NGINX Ingress
-subTitle: Red Hat Enterprise and Centos Linux Server Adminsitration
+subTitle: Red Hat Enterprise and Centos Linux Server Administration
 category: "Container"
 date: 2019-01-22
 cover: photo-34607488365_9f40aafb01_o-cover.jpg
@@ -22,16 +22,28 @@ hero: photo-34607488365_9f40aafb01_o.jpg
 - [Adding a Node.js / Express.js Web App](#adding-a-nodejs--expressjs-web-app)
   - [Preparing the NGINX Ingress](#preparing-the-nginx-ingress)
   - [It could be so easy, but...](#it-could-be-so-easy-but)
+- [Adding TLS](#adding-tls)
 
 <!-- /TOC -->
 
 
 An [Ingress](https://kubernetes.github.io/ingress-nginx/deploy/#generic-deployment) is an application that allows you to access your Kubernetes services from outside the Kubernetes cluster. This lets you consolidate your routing rules into a single resource, e.g.:
 
+
 * mydomain.com/api/web/ leads to an api service for your web application
 * mydomain.com/api/mobile/ leads to an api-v2 service for the mobile access
-  
+
+
 The __Ingress__ enables you make your services available __without__ having to use [LoadBalancers](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/) (only available on Cloud solutions like AWS, GCE, Azure...) or exposing each service on the Node ([NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport)). Making this the ideal solution for an on-premise hosting of an Kubernetes Cluster.
+
+
+Popular Ingress Controllers include:
+
+
+* [Nginx](https://github.com/kubernetes/ingress-nginx/blob/master/README.md)
+* [Contour](https://github.com/heptio/contour) 
+* [HAProxy](https://www.haproxy.com/blog/haproxy_ingress_controller_for_kubernetes/) 
+* [Traefik](https://github.com/containous/traefik)
 
 
 ![NGINX Ingress for your Kubernetes Cluster](./kubernetes-ingress_01.png)
@@ -628,3 +640,51 @@ Now rebuilding the Docker image, re-uploading it to Docker Hub and restarting th
 
 
 We added the NGINX Ingress to our Kubernetes cluster and used NGINX to proxy three web apps that can now be reached over the internet under the routes `<Cluster WAN IP>\web`, `<Cluster WAN IP>\mobile`, `<Cluster WAN IP>\test`
+
+
+
+## Adding TLS
+
+<!-- HTTPS / Certbot: https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-with-cert-manager-on-digitalocean-kubernetes#step-4-—-installing-and-configuring-cert-manager -->
+
+You can create a certificate for your domain using [Certbot](https://certbot.eff.org). This will create two files that we need to add as a __secret__ to Kubernetes - `privkey.pem` and `fullchain.pem`. Both files can be found under _/etc/letsencrypt/live/my.domain.com_ and be added with the following command:
+
+
+```bash
+kubectl create secret tls my-secret --key ./privkey.pem --cert ./fullchain.pem
+```
+
+And change the Ingress configuration to use the certificate:
+
+
+__nginx-ingress.yaml__
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+  - hosts:
+    - my.domain.com
+    secretName: my-domain-secret
+  rules:
+  - host: my.domain.com
+    http:
+      paths:
+        - path: /web
+          backend:
+            serviceName: web-service
+            servicePort: 5678
+        - path: /mobile
+          backend:
+            serviceName: mobile-service
+            servicePort: 5678
+        - path: /test
+          backend:
+            serviceName: test-service
+            servicePort: 3000
+```

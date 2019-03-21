@@ -1,6 +1,6 @@
 ---
 title: Kubernetes NGINX https Service
-subTitle: Red Hat Enterprise and Centos Linux Server Adminsitration
+subTitle: Red Hat Enterprise and Centos Linux Server Administration
 category: "Container"
 date: 2019-01-21
 cover: photo-34606004425_223f1c6e87_o-cover.jpg

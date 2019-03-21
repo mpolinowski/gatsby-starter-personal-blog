@@ -45,6 +45,19 @@ hero: photo-34607491985_e91fa7d4bc_o.png
   - [sub()](#sub)
 - [Object Oriented Programming](#object-oriented-programming)
   - [Class Inheritance](#class-inheritance)
+- [Comprehensions](#comprehensions)
+  - [List Comprehensions](#list-comprehensions)
+  - [Set Comprehensions](#set-comprehensions)
+  - [Dictionary Comprehensions](#dictionary-comprehensions)
+- [Lambda Functions](#lambda-functions)
+- [Maps](#maps)
+- [Filter](#filter)
+- [Iterator](#iterator)
+- [Generator](#generator)
+  - [Generator Expressions](#generator-expressions)
+- [Itertools](#itertools)
+  - [Chain](#chain)
+  - [Count](#count)
 
 <!-- /TOC -->
 
@@ -342,7 +355,7 @@ Python comes with a variety of modules that group sets of built-in functions. Th
 You can create a custom module by defining them in Python file, e.g. `my_module.py` :
 
 
-```py
+```python
 my_var = 224
 
 def my_function():
@@ -352,7 +365,7 @@ def my_function():
 And importing it with the __import statement__ into the global namespace of your program:
 
 
-```py
+```python
 import my_module
 
 print(my_module.my_var)
@@ -363,7 +376,7 @@ my_module.my_function()
 To keep your code light, you can also just import a single element from a module:
 
 
-```py
+```python
 from my_module import my_function
 
 my_function()
@@ -404,7 +417,7 @@ No matching distribution found for tensorflow==2.0.0-alpha0
 Python comes with the `open()` function that enables you to read the content from files and work with them inside your programs. You can test it by creating a text file, e.g. `test.txt`:
 
 
-```txt
+```
 Hydrogen
 Helium
 Lithium
@@ -450,7 +463,7 @@ To iterate over the complete list, we can use the `readlines()` method. This way
 As we learnt before, we can use both the `w` or `x` method to create a new file (make sure that you have administrative access to your computer to be allowed to create the file):
 
 
-```py
+```python
 my_file= open("test_data.txt", "x")
 my_file.write("Scandium\nTitanium\nVanadium\nChromium\nManganese\nIron\nCobalt\nNickel\nCopper\nZinc\nYttrium\nZirconium\nNiobium\nMolybdenum\nTechnetium\nRuthenium\nRhodium\nPalladium\nSilver\nCadmium")
 my_file.close()
@@ -494,7 +507,7 @@ If you need to modify an existing file - without overwriting the existing data -
 
 __Appending Data__
 
-```py
+```python
 my_file= open("test_data.txt", "a")
 my_file.write("\nHafnium\nTantalum\nTungsten\nRhenium\nOsmium\nIridium\nPlatinum\nGold\nMercury\nRutherfordium\nDubnium\nSeaborgium\nBohrium\nHassium\nMeitnerium\nDarmstadium\nRoentgenium\nCopernecium")
 my_file.close()
@@ -534,7 +547,7 @@ The `match()` method __compares the beginning of the string__ to your query and 
 The `search()` method check the entire string for a match. We are going to use a regular expression this time:
 
 
-```py
+```python
 import re
 arp = "10.112.78.1  0   ca:fe:ca:fe:b7:ce VLAN#345   L"
 a = re.search(r"(.+?) +(\d) +(.+?)\s{2,}(\w)*", arp)
@@ -585,7 +598,7 @@ To output all matches we can use the `group()` method without any argument. Or u
 Given the same reply to an ARP request, we are now going to use the findall() method to find the IP address inside the string. This method, conveniently already returns it's match in form of a list:
 
 
-```py
+```python
 import re
 arp = "10.112.78.223  0   ca:fe:ca:fe:b7:ce VLAN#345   L"
 a = re.search(r"\d\d\.\d{2,}\.[0-9][0-9]\.[0-9]{1,3}", arp)
@@ -607,7 +620,7 @@ a
 By surrounding every block in brackets you will get a list of tuples as a result instead - __Note__ that we added a second IP address to the string we are matching:
 
 
-```py
+```python
 a = re.search(r"(\d\d)\.(\d{2,})\.([0-9][0-9])\.([0-9]{1,3})", arp)
 ```
 
@@ -653,7 +666,7 @@ To verify what class an object belongs to, use the isinstance() - `isinstance(ro
 In the previous example we had a class that did not inherit any attributes from another class - it is convention in Python to add the _default object_ `object` to it in such a case:
 
 
-```py
+```python
 class MyRouter(object):
     "A descriptive string for the class"
     def __init__(self, routername, model, serialno, ios): # class constructor
@@ -673,7 +686,7 @@ class MyRouter(object):
 We can now use our class as parent class for our next example:
 
 
-```py
+```python
 class MyNewRouter(MyRouter):
     "A descriptive string for the class" # class constructor
     def __init__(self, routername, model, serialno, ios, portsno):
@@ -683,3 +696,96 @@ class MyNewRouter(MyRouter):
     def print_new_router(self, string): # class method
         print(string, self.model)
 ```
+
+
+![Python](./python-basics_53.png)
+
+
+
+## Comprehensions
+
+### List Comprehensions
+
+Syntactically, list comprehensions consist of an iterable containing an expression followed by a for clause. This can be followed by additional for or if clauses.
+
+Pythons List Comprehensions allows you to write the following for-loop (`list1`) in a single line (`list2`) - even adding conditional logic (`list3`):
+
+
+![Python](./python-basics_54.png)
+
+
+
+### Set Comprehensions
+
+
+![Python](./python-basics_55.png)
+
+
+
+### Dictionary Comprehensions
+
+
+![Python](./python-basics_56.png)
+
+
+
+## Lambda Functions
+
+Python use the lambda keyword to declare an anonymous function. Syntactically they look different, lambda functions behave in the same way as regular functions that are declared using the def keyword. The following are the characteristics of Python lambda functions:
+
+
+![Python](./python-basics_57.png)
+
+
+* A lambda function can take any number of arguments, but they contain only a single expression. An expression is a piece of code executed by the lambda function, which may or may not return any value.
+* Lambda functions can be used to return objects.
+* Syntactically, lambda functions are restricted to only a single expression.
+
+
+![Python](./python-basics_58.png)
+
+
+
+## Maps
+
+
+![Python](./python-basics_59.png)
+
+
+## Filter
+
+
+![Python](./python-basics_60.png)
+
+
+## Iterator
+
+
+![Python](./python-basics_61.png)
+
+
+## Generator
+
+
+![Python](./python-basics_62.png)
+
+
+### Generator Expressions
+
+
+![Python](./python-basics_63.png)
+
+
+## Itertools
+
+### Chain
+
+
+![Python](./python-basics_64.png)
+
+
+### Count
+
+
+![Python](./python-basics_65.png)
+

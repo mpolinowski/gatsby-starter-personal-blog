@@ -1,6 +1,6 @@
 ---
 title: Kubernetes the Chinese Way
-subTitle: Red Hat Enterprise and Centos Linux Server Adminsitration
+subTitle: Red Hat Enterprise and Centos Linux Server Administration
 category: "Container"
 date: 2019-01-27
 cover: photo-76834w36_4356dfgdsds_o-cover.png
