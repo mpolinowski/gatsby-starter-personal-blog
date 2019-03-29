@@ -8,7 +8,7 @@ hero: photo-34477006171_65093dd884_o.jpg
 
 ---
 
-![Malekula, Vanuatu](./photo-34477006171_65093dd884_o.jpg)
+![Port Vila, Vanuatu](./photo-34477006171_65093dd884_o.jpg)
 
 
 <!-- TOC -->
