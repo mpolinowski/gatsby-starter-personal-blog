@@ -1,6 +1,6 @@
 ---
 title: Kubernetes Cluster Monitoring & Logging
-subTitle: Red Hat Enterprise and Centos Linux Server Adminsitration
+subTitle: Red Hat Enterprise and Centos Linux Server Administration
 category: "Container"
 date: 2019-01-19
 cover: photo-11627898645_5f0761ff9e_o-cover.png

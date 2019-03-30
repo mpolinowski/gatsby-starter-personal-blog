@@ -55,7 +55,7 @@ __I. Download and install the public signing key__
 __II. Add the following in your /etc/yum.repos.d/ directory in a file with a .repo suffix, for example elasticsearch.repo__
 
 
-```yml
+```yaml
 [elasticsearch-6.x]
 name=Elasticsearch repository for 6.x packages
 baseurl=https://artifacts.elastic.co/packages/6.x/yum
@@ -144,7 +144,7 @@ __IV. Restrict access to your Elasticsearch instance__
 
 To configure Elasticsearch open the following file inside your text editor: _/etc/elasticsearch/elasticsearch.yml_. We want to limit access to localhost and a public domain that we are going to configure in NGINX. This can be done with the variable __network.host__:
 
-```yml
+```yaml
 # ---------------------------------- Network -----------------------------------
 #
 # Set the bind address to a specific IP (IPv4 or IPv6):
@@ -158,7 +158,7 @@ http.port: 9200
 
 The HTTP port 9200 is the default port and should be changed - but we are only going to use it on localhost. NGINX will take care of it on the outside - so we will just leave it at it's default value. The webserver will also add a security layer to our app - which means, we will need to enable [CORS header](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) for the transaction. Add the following lines below the Network Block:
 
-```yml
+```yaml
 # --------------------------------- CORS ----------------------------------
 #
 #
@@ -194,7 +194,7 @@ sudo systemctl stop elasticsearch.service
 
 Since we installed a specific version (6.2.3) of Elasticsearch we now need to install the same version of the admin panel Kibana. First Create and edit a new yum repository file for Kibana in _/etc/yum.repos.d/kibana.repo_:
 
-```yml
+```yaml
 [kibana-6.x]
 name=Kibana repository for 6.x packages
 baseurl=https://artifacts.elastic.co/packages/6.x/yum
@@ -213,7 +213,7 @@ yum install kibana-6.2.3-1
 
 Now set the Elasticsearch Connection URL for Kibana in _/etc/kibana/kibana.yml_:
 
-```yml
+```yaml
 elasticsearch.url: "http://localhost:9200"
 ```
 
@@ -241,7 +241,7 @@ Now we can install RestOnlyREST to secure the database. First [download](https:/
 
 First set up the configuration file in _/etc/elasticsearch/readonlyrest.yml_ to allow all access from localhost (required by Kibana) and restrict outside access to specific indices to read only:
 
-```yml
+```yaml
 readonlyrest:
     #optional
     response_if_req_forbidden: Sorry, your request is forbidden.

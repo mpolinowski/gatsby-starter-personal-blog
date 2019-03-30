@@ -1,6 +1,6 @@
 ---
 title: Kubernetes Bare Metal Ingress
-subTitle: Red Hat Enterprise and Centos Linux Server Adminsitration
+subTitle: Red Hat Enterprise and Centos Linux Server Administration
 category: "Container"
 date: 2019-01-21
 cover: photo-34607876585_6e59cd762e_o-cover.png

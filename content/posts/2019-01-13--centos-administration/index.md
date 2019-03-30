@@ -28,7 +28,7 @@ hero: photo-19196703263_69f9f0df5f_o.png
 
 SSH uses your linux user password. Simply use the passwd command after logging in. It will prompt you to change it. Or name a different user to change theirs:
 
-```ssh
+```bash
 passwd
 passwd user1
 ```

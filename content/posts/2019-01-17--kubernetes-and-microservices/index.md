@@ -1,6 +1,6 @@
 ---
 title: Kubernetes and Microservices
-subTitle: Red Hat Enterprise and Centos Linux Server Adminsitration
+subTitle: Red Hat Enterprise and Centos Linux Server Administration
 category: "Container"
 date: 2019-01-17
 cover: photo-34364880182_fe2d33582b_o-cover.jpg
