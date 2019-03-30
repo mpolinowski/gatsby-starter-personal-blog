@@ -21,6 +21,13 @@ hero: photo-33796028333_a7fa30ab08_o.jpg
     - [Estimation](#estimation)
     - [Predictor](#predictor)
     - [Transformer](#transformer)
+- [Supervised Learning Introduction](#supervised-learning-introduction)
+  - [Classification Tasks](#classification-tasks)
+  - [Regression Tasks](#regression-tasks)
+- [Unsupervised Learning Introduction](#unsupervised-learning-introduction)
+  - [Clustering Tasks](#clustering-tasks)
+- [Unsupervised Learning IRL](#unsupervised-learning-irl)
+  - [Clustering](#clustering)
 
 <!-- /TOC -->
 
@@ -35,6 +42,8 @@ First we need to install the [Anaconda Environment](https://www.anaconda.com/dow
 We will begin working with the [Seaborn Package](https://anaconda.org/anaconda/seaborn) dataset that is included in the Anaconda package to become familiar with Python based data analysis.
 
 In the later steps, we are going to use publicly available data from the [UCI Archive](https://archive.ics.uci.edu):
+
+* [Wholesale Customer Dataset](http://archive.ics.uci.edu/ml/datasets/Wholesale+customers)
 
 * [Adult Fertility Study](https://archive.ics.uci.edu/ml/datasets/Fertility)
   * https://archive.ics.uci.edu/ml/machine-learning-databases/00244/
@@ -198,4 +207,63 @@ scaler.fit(X_train)
 X_train = scaler.transform(X_train)
 ```
 
-Here we imported the transformer and store it inside the variable `caler`. Our dataset is then fit to the imported method and the transformation performed.
+Here we imported the transformer and store it inside the variable `scaler`. Our dataset is then fit to the imported method and the transformation performed.
+
+
+## Supervised Learning Introduction
+
+A supervised model explores the relation between a set of features and a target value (label / class). E.g. a person's demographic and their ability to re-pay loans.
+
+
+### Classification Tasks
+
+Classifications are used to build models with discrete categories as labels. Such tasks output a prediction as a probability of an instance belonging to a label. Common Classification Algorithms are:
+
+
+1. __Decision Trees__: A tree-like structure that simulates the decision process based on previous decisions.
+2. __Naive Bayes Classifier__: Relies on probabilistic equations which assume independence among features with the ability to consider several attributes.
+3. __Artificial Neutral Networks__: Replicate the structure of a biological neural network to perform pattern recognition tasks.
+
+
+### Regression Tasks
+
+Used for data with continuous quantities as labels, where the value is represented by a quantity and not a set of possible outcomes - e.g. a linear regression.
+
+
+## Unsupervised Learning Introduction
+
+In unsupervised learning the model is modelled to the data, without any relationship to an output label. It can be used to show up clusters of similarities inside unlabeled data.
+
+
+### Clustering Tasks
+
+Finding clusters in unlabeled data involves grouping instances that are similar to each other, while differing visibly from instances in other groups. The most popular Clustering Algorithms are:
+
+1. __k-means__: Separating instances in _n_ clusters of equal variance by minimizing the sum of the squared distances between 2 points - _Connectivity-based Model_.
+2. __Mean-shift clustering__: Using centroids to create a cluster, where every instances is a candidate to become a centroid (mean of the points in that cluster) - _Centroid-based Model_.
+3. __DBSCAN__: _Density-based spatial clustering of applications with noise_ separates areas with high densities of points as clusters from areas with a low density - _Density-based Model_.
+4. __Gaussian__: The belonging to a cluster is shown as a deviation from a distribution - _Distribution-based Models_.
+
+
+## Unsupervised Learning IRL
+
+We want to use unsupervised models  to analyze data sets from real-world applications. The Objectives are:
+
+* Understanding different clustering techniques
+* Using Panda Dataframes
+* Data visualizations with MatPlotLib
+* Working with algorithms like k-means, mean-shift and DBSCAN
+* Using performance metrics to decide which one to use
+
+
+### Clustering
+
+Clustering is a type of unsupervised machine-learning technique to find pattern in unlabeled input data and divide data points into _n_ clusters based on similarity (and difference to data points in other cluster). The assignment to a cluster can either be __hard__ (absolute designation) or __soft__ (probability of belonging to a cluster). Real-world applications are:
+
+* Search Engine Results
+* Recommendation Programs
+* Image Recognition
+* Market Segmentation for targeted Marketing
+
+
+We are going to use the [Wholesale Customer Dataset](#prerequisite) from the UC Irvine Machine Learning Repository to explore those techniques.
