@@ -25,7 +25,7 @@ hero: photo-76834w36_4vkhjk89776s_78.png
 
 ## Setting up a Squid Proxy Server
 
-How To Install Squid Proxy on CentOS 7:
+How To Install [Squid Proxy](http://www.squid-cache.org/Intro/) on CentOS 7:
 
 
 ```bash
