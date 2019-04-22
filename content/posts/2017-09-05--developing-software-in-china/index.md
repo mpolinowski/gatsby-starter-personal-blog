@@ -2,7 +2,7 @@
 title: Developing Software in China
 subTitle: Being a Software Developer in China can be a nightmare. Every time you try to install some library there is a really good chance that your run into a 404. A lot of the Open Source efforts are all but invisible behind the Golden Shield - Proxy Squid to the rescue.
 category: "LINUX"
-date: 2019-02-02
+date: 2017-09-05
 cover: photo-76834w36_4vkhjk89776s_78-cover.png
 hero: photo-76834w36_4vkhjk89776s_78.png
 ---
