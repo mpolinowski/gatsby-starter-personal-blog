@@ -24,6 +24,13 @@ hero: photo-19194765263_69ad0f_o.png
     - [Update zigbee2mqtt to the latest version](#update-zigbee2mqtt-to-the-latest-version)
   - [Pairing Devices](#pairing-devices)
 - [Adding our Sensors to FHEM](#adding-our-sensors-to-fhem)
+- [Adding SQL Logging](#adding-sql-logging)
+  - [Installing MariaDB on our Raspberry Pi](#installing-mariadb-on-our-raspberry-pi)
+  - [Configuring MariaDB for FHEM](#configuring-mariadb-for-fhem)
+  - [Log Filter](#log-filter)
+  - [Average / Reduce](#average--reduce)
+- [Compare with Data from Web-APIs](#compare-with-data-from-web-apis)
+  - [Visualize Logs](#visualize-logs)
   - [Add the MQTT input to an existing Flow](#add-the-mqtt-input-to-an-existing-flow)
 
 <!-- /TOC -->
@@ -584,49 +591,415 @@ Our sensors have been recognized through the FHEM connector - nice! And we have 
 ---
 
 
+## Adding SQL Logging
+
+### Installing MariaDB on our Raspberry Pi
+
+We will start by installing the MariaDB (_MySQL_) Client and Server. Additionally, we need two Perl packages to be able to connect FHEM to the DB Client:
+
+
+```bash
+sudo apt-get update
+sudo apt-get install mysql-server mysql-client
+sudo apt-get install libdbi-perl libclass-dbi-mysql-perl
+```
+
+
+This should install and start your MariaDB instance. We can now continue to configure our database. By default the database can only be accessed by localhost - this might be perfectly fine (and is the secure option), but if you want to be able to access data on your Raspberry Pi from different computers we have to comment out the line `bind-address = 127.0.0.1` inside:
+
+
+```bash
+sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
+```
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_17.png)
+
+---
+
+
+We can now enter our database with the following command (just press enter when asked for a password):
+
+
+```
+sudo mysql -u root -p
+```
+
+
+We will assign a new root password with the first line (see below - change the 'instar' string with your real password):
+
+
+```sql
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'instar';
+GRANT USAGE ON *.* TO 'root'@'%' WITH GRANT OPTION;
+exit
+```
+
+For those change to take affect we now need to restart our SQL server `sudo service mysql restart`.
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_18.png)
+
+---
 
 
 
+### Configuring MariaDB for FHEM
+
+We can now use a SQL Client, e.g. [SQLElectron-GUI](https://sqlectron.github.io/#gui) to further configure our database.
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_19.png)
+
+---
+
+
+We are going to create a database called `fhem` as well as a user `fhemuser` with the login `instar` (change all of those at will) that will be used for our FHEM-generated data:
 
 
 
+```sql
+CREATE DATABASE `fhem` DEFAULT CHARACTER SET = `utf8`;
+
+CREATE USER 'fhemuser'@'%' IDENTIFIED BY 'instar';
+
+REVOKE CREATE ROUTINE, CREATE VIEW, CREATE USER, ALTER, SHOW VIEW, CREATE, ALTER ROUTINE, EVENT, SUPER, INSERT, RELOAD, SELECT, DELETE, FILE, SHOW DATABASES, TRIGGER, SHUTDOWN, REPLICATION CLIENT, GRANT OPTION, PROCESS, REFERENCES, UPDATE, DROP, REPLICATION SLAVE, EXECUTE, LOCK TABLES, CREATE TEMPORARY TABLES, INDEX ON *.* FROM 'fhemuser'@'%';
+
+UPDATE mysql.user SET max_questions = 0, max_updates = 0, max_connections = 0 WHERE User = 'fhemuser' AND Host = '%';
+
+GRANT CREATE ROUTINE, CREATE VIEW, ALTER, SHOW VIEW, CREATE, ALTER ROUTINE, EVENT, INSERT, SELECT, DELETE, TRIGGER, GRANT OPTION, REFERENCES, UPDATE, DROP, EXECUTE, LOCK TABLES, CREATE TEMPORARY TABLES, INDEX ON `fhem`.* TO 'fhemuser'@'%';
+
+USE `fhem`;
+
+CREATE TABLE `history` (
+    `TIMESTAMP` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `DEVICE` varchar(64) DEFAULT NULL,
+    `TYPE` varchar(64) DEFAULT NULL,
+    `EVENT` varchar(512) DEFAULT NULL,
+    `READING` varchar(64) DEFAULT NULL,
+    `VALUE` varchar(255) DEFAULT NULL,
+    `UNIT` varchar(32) DEFAULT NULL,
+    KEY `IDX_HISTORY` (`DEVICE`,`READING`,`TIMESTAMP`,`VALUE`),
+    KEY `DEVICE` (`DEVICE`,`READING`)
+);
+
+CREATE TABLE `current` (
+  `TIMESTAMP` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `DEVICE` varchar(64) DEFAULT NULL,
+  `TYPE` varchar(64) DEFAULT NULL,
+  `EVENT` varchar(512) DEFAULT NULL,
+  `READING` varchar(64) DEFAULT NULL,
+  `VALUE` varchar(255) DEFAULT NULL,
+  `UNIT` varchar(32) DEFAULT NULL
+);
+```
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_20.png)
+
+---
+
+
+When successful, this will have created a database with the name `fhem` and two tables called `current` and `history` (For me the new table did not show up in SQLElecton right away after it was created. I disconnected, edited the database entry - see 2 screenshots up - and set the `Initial Database` to `fhem`. After reconnecting everything looked as it should):
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_21.png)
+
+---
 
 
 
+Let's now add our database to FHEM. We do this by copying the `db.conf` template to the FHEM root directory and editing the MySQL section:
+
+
+```bash
+sudo cp /opt/fhem/contrib/dblog/db.conf /opt/fhem/db.conf
+sudo chown fhem:dialout /opt/fhem/db.conf
+sudo nano /opt/fhem/db.conf
+```
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_22.png)
+
+---
+
+
+```perl
+%dbconfig= (
+    connection => "mysql:database=fhem;host=localhost;port=3306",
+    user => "fhemuser",
+    password => "instar",
+    # optional enable(1) / disable(0) UTF-8 support (at least V 4.042 is necessary)
+    utf8 => 1
+);
+```
+
+
+Now all we have to do is to tell FHEM to read the configuration file and start using our database setup to store all events:
+
+
+```bash
+define DBLogging DbLog /opt/fhem/db.conf .*:.*
+```
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_23.png)
+
+---
+
+
+And don't forget to the set the __DBLogType__ to `Current/History` (see bottom of the screenshot above). We can verify that the logging has started by querying the content of our __Current Table__:
 
 
 
+```sql
+SELECT * FROM current;
+```
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_24.png)
+
+---
+
+
+To make sure that the connection with your database is re-established if for whatever reason it fails, run the following command in FHEM: `define DBLogging_Reopen at +*00:15:00 set DBLogging reopen`.
 
 
 
+### Log Filter
+
+We set up FHEM to log every event, which quickly leads to a huge pile of - mostly useless - data. You can check your current history with the followinf command:
+
+
+```bash
+SELECT DEVICE, COUNT(*) FROM history GROUP BY DEVICE ORDER BY 2 DESC;
+```
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_25.png)
+
+---
+
+
+In my case only the temperature/humidity sensor and motion detector generates data that I want to use in later projects - the rest should be excluded. For this, we can go back to our DBLogging device in FHEM - `http://<RaspiIP>:8083/fhem?detail=DBLogging` and change the default __DbLogSelectionMode__ to `Exclude/Include`:
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_26.png)
+
+---
 
 
 
+* __Exclude__: DbLog behaves just as usual. This means everything specified in the regex in DEF will be logged by default and anything excluded via the DbLogExclude attribute will not be logged
+* __Include__: Nothing will be logged, except the readings specified via regex in the DbLogInclude attribute (in source devices). Neither the Regex set in DEF will be considered nor the device name of the source device itself.
+* __Exclude/Include__: Just almost the same as Exclude, but if the reading matches the DbLogExclude attribute, then it will further be checked against the regex in DbLogInclude whicht may possibly re-include the already excluded reading.
 
 
 
+That means with `Exclude/Include` selected for our logging service we can now edit every device that is generating log entries and `set attr <name> DbLogExclude .*`:
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_29.png)
+
+---
+
+
+The regular expression `.*` includes everything and so nothing is logged anymore. __Note__: If you already have many devices included, simply use the following command to set this attribute for all your devices: `attr .* DbLogExclude .*`. To automate this for future devices use the following _notify_ function:
+
+
+```bash
+define n_DbLogExclude notify global:DEFINED.* attr $EVTPART1 DbLogExclude .*
+```
+
+
+In a second step we can go in and use `set attr <name> DbLogInclude <variable>` to include selected variables for our log:
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_30.png)
+
+---
+
+
+### Average / Reduce
+
+Additionally FHEM offers a Log reduction function that allows us to average every event that is older then n-days to only 1 event per hour:
+
+
+```bash
+set <name> reduceLogNbl <n> average
+```
+
+
+If we want to keep our data for 3 months this would be `set DBLogging reduceLogNbl 90 average`:
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_27.png)
+
+---
+
+
+We can automate this in FHEM with:
+
+
+```bash
+define at_DbLoggingReduce at *04:30:00 set DBLogging reduceLogNbl 90 average
+```
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_28.png)
+
+---
+
+
+You can further reduce your data logs for entries older then 24hrs:
+
+
+```bash
+define DBLogging_Reduce at +*24:00:00 set DBLogging reduceLog 1
+```
 
 
 
+## Compare with Data from Web-APIs
+
+
+I now have a reading for the temperature inside my office - and might add a few more temperature sensors in the future. But it would be interesting to see how well the temperatures I measure fit the temperatures I can get from an online weather services like [DarkSky.net](https://darksky.net/forecast/22.5446,114.0545/si12/en). Click the link and select your city - you will find the coordinates that DarkSky assigns to your location inside the URL - in case of Shenzhen, China this is `22.5446,114.0545`:
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_31.png)
+
+---
+
+
+Once we know our ID we can start using the integrated weather module in FHEM to query the corresponding information for our location. Just make sure that your Raspberry Pi has the following Perl libraries installed so FHEM knows how to handle the API's JSON response (`shutdown restart` FHEM after the installation was successful):
+
+
+```bash
+sudo apt -y install libjson-perl libdatetime-format-strptime-perl
+```
+
+
+The command to add a weather device in FHEM then looks like this:
+
+
+```bash
+define <name> Weather [API=<API>[,<apioptions>]] [apikey=<apikey>] [location=<location>] [interval=<interval>] [lang=<lang>]
+```
 
 
 
+For me this results to `define ShenZhenWeather Weather API=DarkSkyAPI,cachemaxage:600 apikey=09878945fdskv876 location=22.5446,114.0545 interval=3600 lang=en`. __Note__: the API key inside this command does not work - you have to get your own free key by [registering with DarkSky](https://darksky.net/dev).
 
 
+You should see your first reading coming in a few seconds later:
 
 
+---
+![Zigbee2MQTT](./zigbee2mqtt_32.png)
+
+---
 
 
+We can also output the data for a 7 day forecast on our FHEM interface by defining an HTML output:
 
 
+```bash
+define ShenZhenWeatherHtml weblink htmlCode {WeatherAsHtml("ShenZhenWeatherHtml",7)}
+```
 
 
+---
+![Zigbee2MQTT](./zigbee2mqtt_34.png)
+
+---
 
 
+We can now reduce the amount of variables that we record by using `event-on-update-reading`, so by the next update I only receive (and log - see `DbLogInclude`) the following:
 
 
+---
+![Zigbee2MQTT](./zigbee2mqtt_35.png)
+
+---
 
 
+```
+apparentTemperature,cloudCover,condition,humidity,ozone,pressure,temp_c,uvIndex,visibility,wind,windGust,wind_direction
+```
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_36.png)
+
+---
+
+
+### Visualize Logs
+
+
+We can quickly write the API response to a log file:
+
+
+```
+define FileLog_ShenZhenWeather FileLog ./log/ShenZhenWeather-%Y.log ShenZhenWeather
+```
+
+You can check that the file is written with `cat /opt/fhem/log/ShenZhenWeather-2019.log`.
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_33.png)
+
+---
+
+
+We can now use the integrated plot function to create a little SVG plot for our log:
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_37.png)
+
+![Zigbee2MQTT](./zigbee2mqtt_38.png)
+
+---
+
+
+Generating the plot will add received data points to your plot. You can adjust the axis range and highlight colours to your need.
+
+
+Going back to the __ShenZhenWeather__ log definition, we can now also add the temperature and humidity reading from our XiaoMi sensor to the same log file:
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_39.png)
+
+![Zigbee2MQTT](./zigbee2mqtt_40.png)
+
+---
+
+
+And then go and add it to our plot - voilá :
+
+
+---
+![Zigbee2MQTT](./zigbee2mqtt_41.png)
+
+---
 
 
 
@@ -715,3 +1088,18 @@ And last but not least we add a __Link Node__ to plug it in to all 4 sequences f
 
 
 We attached a __Debug Node__ to the MQTT input to visualize the input given by the Wireless Button - __Note__ that only the `single` and `double` click trigger the Alarm Area Sequences - the rest of the input options can be used for other functions. -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- attr WEB roomIcons Office:scene_office Logging:time_graph Unsorted:recycling XiaomiMQTTDevice:mqtt Everything:file_unknown ShenZhen:gitlab -->
