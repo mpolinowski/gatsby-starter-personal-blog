@@ -999,6 +999,8 @@ And then go and add it to our plot - voilá :
 ---
 ![Zigbee2MQTT](./zigbee2mqtt_41.png)
 
+![Zigbee2MQTT](./zigbee2mqtt_42.png)
+
 ---
 
 
