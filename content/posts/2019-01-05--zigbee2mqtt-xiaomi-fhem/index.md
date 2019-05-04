@@ -921,7 +921,7 @@ We can also output the data for a 7 day forecast on our FHEM interface by defini
 ```bash
 define ShenZhenWeatherHtml weblink htmlCode {WeatherAsHtml("ShenZhenWeatherHtml",7)}
 ```
-
+<!-- define SZWeatherForecast weblink htmlCode {"ShenZhen 7-Day Forecast:<br>".WeatherAsHtml("ShenZhenWeatherHtml",7)} -->
 
 ---
 ![Zigbee2MQTT](./zigbee2mqtt_34.png)
